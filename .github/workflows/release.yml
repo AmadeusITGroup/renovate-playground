@@ -1,49 +1,46 @@
-name: release
+name: Release
+
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        type: string
-        required: true
-        description: Version number (x.y.z)
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
-  build:
-    uses: './.github/workflows/build.yml'
-    with:
-      version: ${{ inputs.version }}
-      dockerPublish: false
-
-  create-release:
-    needs: build
+  release:
+    name: Semantic Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Generate changelog
-        id: changelog
-        run: |
-          echo "## Changes in this Release" > CHANGELOG.md
-          prev_tag=$(git describe --tags --abbrev=0 2>/dev/null || true)
-          if [ -n "$prev_tag" ]; then
-            git log --pretty=format:"- %s (%h)" "$prev_tag"..HEAD >> CHANGELOG.md
-          else
-            git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
-          fi
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          tag_name: v${{ inputs.version }}
-          name: Release v${{ inputs.version }}
-          body_path: CHANGELOG.md
-          draft: false
-          prerelease: false
-          generate_release_notes: false
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+        run: npx semantic-release
