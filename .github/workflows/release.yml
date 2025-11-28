@@ -91,7 +91,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/amadeusitgroup/renovate-playground
           tags: |
             type=semver,pattern={{version}},value=${{ steps.get_version.outputs.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ steps.get_version.outputs.version }}
@@ -126,7 +126,7 @@ jobs:
         if: steps.get_version.outputs.new_release == 'true'
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ghcr.io/${{ github.repository }}
+          subject-name: ghcr.io/amadeusitgroup/renovate-playground
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
 
