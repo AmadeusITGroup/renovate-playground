@@ -20,7 +20,7 @@ interface LogEntry {
   time: string;
   level: string;
   type: string;
-  raw?: any;
+  raw?: unknown;
 }
 
 @Component({
@@ -90,6 +90,8 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
         next: (logMessage: RenovateLogMessage) => {
           // Run inside Angular zone to trigger change detection
           this.ngZone.run(() => {
+            console.log('Received log message:', logMessage);
+            console.log('Received log message:', logMessage);
 
             // Create a log entry from the message
             const logEntry: LogEntry = {
@@ -203,7 +205,7 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
     }
   }
 
-  private processPackageFiles(packageFiles: any): void {
+  private processPackageFiles(packageFiles: unknown): void {
     if (!packageFiles || !Array.isArray(packageFiles)) {
       return;
     }
@@ -213,18 +215,18 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
       if (pkgFile.deps) {
         // Process each dependency in the package file
         for (const [depName, depInfo] of Object.entries(pkgFile.deps)) {
-          const dep = depInfo as any;
-          if (dep.updates && dep.updates.length > 0) {
+          const dep = depInfo as Record<string, unknown>;
+          if (dep.updates && Array.isArray(dep.updates) && dep.updates.length > 0) {
             // Get the latest update
-            const update = dep.updates[dep.updates.length - 1];
+            const update = dep.updates[dep.updates.length - 1] as Record<string, unknown>;
 
             const dependency: Dependency = {
               type: pkgFile.manager || 'npm',
               name: depName,
-              currentVersion: dep.currentVersion || 'unknown',
-              newVersion: update.newVersion || 'unknown',
+              currentVersion: (dep.currentVersion as string) || 'unknown',
+              newVersion: (update.newVersion as string) || 'unknown',
               manager: pkgFile.manager,
-              depType: dep.depType
+              depType: (dep.depType as string) || undefined
             };
 
             // Check if this dependency is already in the array
@@ -237,17 +239,18 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
     }
   }
 
-  private processPackageFilesWithUpdates(config: any): void {
-    if (!config || !config.regex || !Array.isArray(config.regex)) {
+  private processPackageFilesWithUpdates(config: unknown): void {
+    const configObj = config as Record<string, unknown>;
+    if (!configObj || !configObj.regex || !Array.isArray(configObj.regex)) {
       return;
     }
 
     // Process each regex configuration
-    for (const regexConfig of config.regex) {
+    for (const regexConfig of configObj.regex) {
       if (regexConfig.deps && Array.isArray(regexConfig.deps)) {
         // Process each dependency in the regex config
         for (const dep of regexConfig.deps) {
-          if (dep.updates && dep.updates.length > 0) {
+          if (dep.updates && Array.isArray(dep.updates) && dep.updates.length > 0) {
             // Process each update for this dependency
             for (const update of dep.updates) {
               const dependency: Dependency = {
@@ -267,33 +270,34 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
     }
   }
 
-  private processBranchesInfoExtended(branchesInformation: any[]): void {
+  private processBranchesInfoExtended(branchesInformation: unknown[]): void {
     if (!branchesInformation || !Array.isArray(branchesInformation)) {
       return;
     }
 
     // Logging: Starting to process branchesInformation
-    let dependencyCount = 0;
 
     // Process each branch
     for (const branch of branchesInformation) {
+      const branchObj = branch as Record<string, unknown>;
       // Check if upgrades exist
-      if (branch.upgrades && Array.isArray(branch.upgrades)) {
+      if (branchObj.upgrades && Array.isArray(branchObj.upgrades)) {
         // Process each upgrade in the branch
-        for (const upgrade of branch.upgrades) {
+        for (const upgrade of branchObj.upgrades) {
+          const upgradeObj = upgrade as Record<string, unknown>;
           const dependency: Dependency = {
-            type: upgrade.datasource || 'unknown',
-            name: upgrade.depName || upgrade.packageName || 'unknown',
-            currentVersion: upgrade.currentVersion || upgrade.fixedVersion || 'unknown',
-            newVersion: upgrade.newVersion || 'unknown',
-            manager: upgrade.datasource,
-            depType: upgrade.updateType,
+            type: (upgradeObj.datasource as string) || 'unknown',
+            name: (upgradeObj.depName as string) || (upgradeObj.packageName as string) || 'unknown',
+            currentVersion: (upgradeObj.currentVersion as string) || (upgradeObj.fixedVersion as string) || 'unknown',
+            newVersion: (upgradeObj.newVersion as string) || 'unknown',
+            manager: upgradeObj.datasource as string,
+            depType: upgradeObj.updateType as string,
             // Set status based on prNo - null means repo is not onboarded yet
-            status: branch.prNo === null ? 'discovered' : 'update-available'
+            status: branchObj.prNo === null ? 'discovered' : 'update-available'
           };
 
           this.addOrUpdateDependency(dependency);
-          dependencyCount++;
+          // dependencyCount++;
         }
       }
     }

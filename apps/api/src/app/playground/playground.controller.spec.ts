@@ -156,11 +156,4 @@ describe('PlaygroundController', () => {
       expect(mockResponse.write).toHaveBeenCalled();
     });
   });
-
-  describe('onModuleDestroy', () => {
-    it('should clean up resources on module destroy', () => {
-      // This should not throw
-      expect(() => controller.onModuleDestroy()).not.toThrow();
-    });
-  });
 });

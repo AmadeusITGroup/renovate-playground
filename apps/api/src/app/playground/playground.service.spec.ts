@@ -1,3 +1,4 @@
+import { Subscriber } from 'rxjs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PlaygroundService } from './playground.service';
 
@@ -104,13 +105,13 @@ describe('PlaygroundService', () => {
         time: '2024-10-22T10:00:00.000Z',
       });
 
-      service['processLogLine'](jsonLog, 'log', mockSubscriber);
+      service['processLogLine'](jsonLog, 'log', mockSubscriber as unknown as Subscriber<MessageEvent>);
 
       expect(mockSubscriber.next).toHaveBeenCalled();
       const call = mockSubscriber.next.mock.calls[0][0];
       expect(call).toHaveProperty('data');
       expect(call).toHaveProperty('type');
-      expect(call).toHaveProperty('time');
+      expect(call.data).toHaveProperty('time');
     });
 
     it('should handle non-JSON log lines', () => {
@@ -120,11 +121,12 @@ describe('PlaygroundService', () => {
         complete: jest.fn(),
       };
 
-      service['processLogLine']('Plain text log', 'log', mockSubscriber);
+      service['processLogLine']('Plain text log', 'log', mockSubscriber as unknown as Subscriber<MessageEvent>);
 
       expect(mockSubscriber.next).toHaveBeenCalled();
       const call = mockSubscriber.next.mock.calls[0][0];
-      expect(call.data).toBe('Plain text log');
+      expect(call.data).toHaveProperty('original', 'Plain text log');
+      expect(call.data).toHaveProperty('time');
       expect(call.type).toBe('log');
     });
 
@@ -140,7 +142,7 @@ describe('PlaygroundService', () => {
         packageFiles: [{ file: 'package.json' }],
       });
 
-      service['processLogLine'](packageFilesLog, 'log', mockSubscriber);
+      service['processLogLine'](packageFilesLog, 'log', mockSubscriber as unknown as Subscriber<MessageEvent>);
 
       expect(mockSubscriber.next).toHaveBeenCalled();
       const call = mockSubscriber.next.mock.calls[0][0];
@@ -159,7 +161,7 @@ describe('PlaygroundService', () => {
         branchesInformation: [{ branch: 'main' }],
       });
 
-      service['processLogLine'](branchesLog, 'log', mockSubscriber);
+      service['processLogLine'](branchesLog, 'log', mockSubscriber as unknown as Subscriber<MessageEvent>);
 
       expect(mockSubscriber.next).toHaveBeenCalled();
       const call = mockSubscriber.next.mock.calls[0][0];

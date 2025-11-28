@@ -41,6 +41,23 @@ export class PlaygroundController implements OnModuleDestroy {
       return;
     }
 
+    // Try to parse config first before setting headers
+    let parsedConfig: object;
+    try {
+      if (typeof config === 'string') {
+        // Try to decode if it looks URL-encoded (contains %)
+        const configStr = config.includes('%') ? decodeURIComponent(config) : config;
+        parsedConfig = JSON.parse(configStr);
+      } else {
+        parsedConfig = config;
+      }
+    } catch (error) {
+      this.logger.error('Invalid JSON configuration:', error);
+      console.error('JSON parse error details:', error);
+      res.status(400).json({ error: 'Invalid JSON configuration provided' });
+      return;
+    }
+
     // Set proper SSE headers
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -52,8 +69,6 @@ export class PlaygroundController implements OnModuleDestroy {
     });
 
     try {
-      // Config is already an object if sent as JSON, or needs parsing if sent as string
-      const parsedConfig = typeof config === 'string' ? JSON.parse(config) : config;
 
       // Store the request/response pair for cleanup
       const requestId = Math.random().toString(36).substring(2, 9);
@@ -91,6 +106,7 @@ export class PlaygroundController implements OnModuleDestroy {
         },
         error: (error) => {
           this.logger.error('Error in SSE stream:', error);
+          console.error('SSE stream error details:', error);
           if (!res.writableEnded) {
             const errorEvent = `data: ${JSON.stringify({
               data: `Error: ${error.message || error}`,
@@ -124,12 +140,9 @@ export class PlaygroundController implements OnModuleDestroy {
 
     } catch (error) {
       this.logger.error('Error in runRenovate:', error);
+      console.error('runRenovate error details:', error);
       if (!res.writableEnded) {
-        if (error instanceof SyntaxError) {
-          res.status(400).json({ error: 'Invalid JSON configuration provided' });
-        } else {
-          res.status(500).json({ error: 'Failed to start Renovate process' });
-        }
+        res.status(500).json({ error: 'Failed to start Renovate process' });
       }
     }
   }

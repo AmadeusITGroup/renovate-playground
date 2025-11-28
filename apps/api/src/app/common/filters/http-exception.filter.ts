@@ -17,11 +17,16 @@ export class ErrorResponse {
   method: string;
 }
 
+interface ExceptionResponse {
+  message?: string;
+  error?: string;
+}
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger('ExceptionFilter');
 
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
@@ -32,13 +37,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      const response = exception.getResponse();
+      const exceptionResponse = exception.getResponse();
       
-      if (typeof response === 'object') {
-        message = (response as any).message || message;
-        error = (response as any).error || error;
+      if (typeof exceptionResponse === 'object') {
+        const responseObj = exceptionResponse as ExceptionResponse;
+        message = responseObj.message || message;
+        error = responseObj.error || error;
       } else {
-        message = response as string;
+        message = exceptionResponse as string;
       }
     } else if (exception instanceof Error) {
       message = exception.message;
@@ -47,13 +53,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     // Log the error
     if (status >= 500) {
+      const errorMessage = exception instanceof Error ? exception.message : 'Unknown error';
+      const errorStack = exception instanceof Error ? exception.stack : '';
       this.logger.error(
-        `${request.method} ${request.url} ${status} Error: ${exception.message}\n${exception.stack}`,
+        `${request.method} ${request.url} ${status} Error: ${errorMessage}\n${errorStack}`,
       );
+      // Also log the full exception object for debugging
+      console.error('Full exception details:', exception);
     } else if (status >= 400) {
+      const errorMessage = exception instanceof Error ? exception.message : 'Unknown error';
       this.logger.warn(
-        `${request.method} ${request.url} ${status} Error: ${exception.message}`,
+        `${request.method} ${request.url} ${status} Error: ${errorMessage}`,
       );
+      // Log warning details to console
+      console.warn('Warning details:', exception);
     }
 
     const errorResponse: ErrorResponse = {

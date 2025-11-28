@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MessageEvent } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -179,12 +179,12 @@ export class PlaygroundService {
         // Mark process as no longer running
         this.isProcessRunning = false;
 
-        return () => {};
+        return () => { /* Cleanup on error */ };
       }
     });
   }
 
-  private processLogLine(line: string, type: string, subscriber: any): void {
+  private processLogLine(line: string, type: string, subscriber: Subscriber<MessageEvent>): void {
     try {
       // Try to parse the line as JSON
       const parsedLine = JSON.parse(line);
@@ -215,21 +215,24 @@ export class PlaygroundService {
 
       // Format the message with timestamp
       // Send the ORIGINAL line (already a JSON string) plus metadata
-      const messageWithTime: any = {
-        data: line,  // Keep original JSON string
-        type: messageType,
-        time: timestamp,
-        msg: parsedLine.msg || '',
-        level: parsedLine.level || 'info'
+      const messageWithTime: MessageEvent = {
+        data: {
+          original: line,
+          time: timestamp,
+          msg: parsedLine.msg || '',
+          level: parsedLine.level || 'info'
+        },
+        type: messageType
       };
 
       subscriber.next(messageWithTime);
     } catch (e) {
-      // If not valid JSON, just pass through the original line
       subscriber.next({
-        data: line,
-        type: type,
-        time: new Date().toISOString()
+        data: {
+          original: line,
+          time: new Date().toISOString()
+        },
+        type: type
       });
     }
   }

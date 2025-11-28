@@ -3,9 +3,15 @@ import { AppModule } from './app/app.module';
 import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { HttpExceptionFilter } from './app/common/filters/http-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
+  
+  // Apply global exception filter to ensure all errors are caught
+  app.useGlobalFilters(new HttpExceptionFilter());
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 
