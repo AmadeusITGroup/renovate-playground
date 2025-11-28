@@ -5,6 +5,9 @@ FROM registry.access.redhat.com/ubi9/nodejs-22:latest AS builder
 # Set working directory
 WORKDIR /app
 
+# Disable Nx daemon for Docker builds
+ENV NX_DAEMON=false
+
 # Install pnpm globally
 USER root
 RUN npm install -g pnpm@latest
