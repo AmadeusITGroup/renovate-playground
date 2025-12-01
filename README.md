@@ -1,143 +1,201 @@
-# Renovate Playground
+# 🔧 Renovate Playground
 
-A web based playground for testing and debugging [Renovate](https://github.com/renovatebot/renovate) configurations in real-time. This tool allows you to experiment with Renovate configurations against any GitHub repository.
+<p align="center">
+  <strong>A web based playground for testing and debugging <a href="https://github.com/renovatebot/renovate">Renovate</a> configurations in real-time.</strong>
+</p>
 
-> 🎯 **Harmonized Setup**: Both local and Docker environments run on port **8080** with the same URL structure (`http://localhost:8080`). See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed architecture information.
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-usage">Usage</a> •
+  <a href="#-development">Development</a> •
+  <a href="#-docker">Docker</a> •
+  <a href="#-contributing">Contributing</a>
+</p>
 
-## What is This?
+---
 
-Renovate Playground is an interactive development tool that helps you:
-- **Test Renovate configurations** before deploying them to production
-- **Debug configuration issues** with real-time log streaming
-- **Visualize package updates** and branch information
-- **Experiment safely** with dry-run mode enabled by default
+<p align="center">
+  <img src="./Renovate_Playground_UI.gif" alt="Renovate Playground Demo" width="800">
+</p>
 
-### How It Works
+## ✨ Features
 
-1. **User Input**: Enter a GitHub repository URL, Personal Access Token (PAT), and Renovate configuration
-2. **Backend Processing**: The NestJS API spawns a Renovate process with your configuration in dry-run mode
-3. **Real-time Streaming**: Logs are streamed back to the UI via Server-Sent Events (SSE)
-4. **Results Display**: View package files, proposed updates, and branch information in the UI
+- **🧪 Test Configurations** — Validate Renovate configs before deploying to production
+- **🔍 Debug Issues** — Real-time log streaming helps identify configuration problems
+- **📊 Visualize Updates** — See package files, proposed updates, and branch information
+- **🔒 Safe Experimentation** — Dry-run mode enabled by default, no actual changes made
 
-## Prerequisites
+## 📋 Prerequisites
 
-- **Node.js**: v22.x or higher
-- **pnpm**: Latest version (installed globally)
-- **Docker/Podman** (optional, for containerized deployment)
+| Requirement   | Version | Notes                                  |
+| ------------- | ------- | -------------------------------------- |
+| Node.js       | v22.x+  | Required                               |
+| pnpm          | Latest  | Package manager                        |
+| Docker/Podman | Any     | Optional, for containerized deployment |
 
-## Getting Started
+## 🚀 Quick Start
 
-### Clone the Repository
+The fastest way to get started is using our pre-built Docker image:
 
 ```bash
-git clone <repository-url>
+podman run --platform linux/amd64 -p 8080:8080 ghcr.io/amadeusitgroup/renovate-playground:latest
+```
+
+**Open your browser**: Navigate to `http://localhost:8080`
+
+> 💡 **Tip**: Browse all available versions on the [GitHub Container Registry](https://github.com/AmadeusITGroup/renovate-playground/pkgs/container/renovate-playground).
+
+### Building from Source
+
+If you prefer to build locally:
+
+```bash
+# Clone the repository
+git clone https://github.com/AmadeusITGroup/renovate-playground.git
 cd renovate-playground
-```
 
-### Install Dependencies
-
-```bash
+# Install dependencies
 pnpm install
+
+# Start the application
+pnpm start
 ```
 
-## Usage
+Access at `http://localhost:4200` (UI with hot reload) or `http://localhost:8080` (API)
 
-### Option 1: Local Development (Unified Mode - Recommended)
+## �� Usage
 
-Run everything on port 8080, same as Docker:
+### Using the Playground
+
+1. **Repository URL** — Enter the full GitHub repository URL  
+   _Example: `https://github.com/owner/repo`_
+
+2. **Personal Access Token** — Provide a GitHub PAT with `repo` scope
+
+3. **Renovate Configuration** — Enter your configuration in JSON format
+
+4. **Submit** — Click submit to run Renovate in dry-run mode
+
+5. **View Results** — Monitor real-time logs and analyze the results
+
+### Example Configuration
+
+```json
+{
+  "extends": ["config:recommended"]
+}
+```
+
+## 💻 Development
+
+### Available Scripts
+
+| Command          | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `pnpm start`     | Start both UI and API (recommended for development) |
+| `pnpm start:ui`  | Start Angular UI only (port 4200)                   |
+| `pnpm start:api` | Start NestJS API only (port 8080)                   |
+| `pnpm build`     | Build all applications                              |
+| `pnpm test`      | Run all tests                                       |
+| `pnpm lint`      | Lint all projects                                   |
+| `pnpm format`    | Format code with Prettier                           |
+
+### Development Modes
+
+#### Unified Mode (Same as Docker)
+
+Run everything on port 8080:
 
 ```bash
 pnpm start:api
 ```
 
-**Access the application**: Open your browser to `http://localhost:8080`
+Access at `http://localhost:8080`
 
-> **Note**: This serves both frontend and backend on the same port, identical to Docker deployment.
-
-### Option 2: Local Development (Separate Dev Servers)
+#### Separate Dev Servers (Hot Reload)
 
 For Angular hot reload during development:
 
 ```bash
-# Terminal 1 - Start the API (runs on http://localhost:8080)
+# Terminal 1 - API server
 pnpm start:api
 
-# Terminal 2 - Start the UI dev server (runs on http://localhost:4200)
+# Terminal 2 - UI dev server with hot reload
 pnpm start:ui
 ```
 
-**Access the application**: Open your browser to `http://localhost:4200`
+Access at `http://localhost:4200` (proxies API requests to port 8080)
 
-> **Note**: The Angular dev server proxies API requests to port 8080.
+## 🐳 Docker
 
-### Option 3: Run with Docker
-
-#### Build the Docker Image
+### Build and Run
 
 ```bash
+# Build the image
 docker build -t renovate-playground:latest .
-```
 
-#### Run the Container
-
-```bash
+# Run the container
 docker run -p 8080:8080 renovate-playground:latest
 ```
 
-**Access the application**: Open your browser to `http://localhost:8080`
+Access at `http://localhost:8080`
 
-> **Note**: The Docker image serves both the API and the built UI from the same container on port 8080.
-
-#### Using Podman
+### Using Podman
 
 ```bash
-# Build
 podman build -t renovate-playground:latest .
-
-# Run
 podman run -p 8080:8080 renovate-playground:latest
 ```
 
-## How to Use the Playground
+> 📝 **Note**: The Docker image serves both the API and built UI from the same container on port 8080.
 
-1. **Repository URL**: Enter the full GitHub repository URL (e.g., `https://github.com/owner/repo`)
-2. **Personal Access Token**: Provide a GitHub PAT with `repo` scope to access the repository
-3. **Renovate Configuration**: Enter your Renovate configuration in JSON format
-4. **Submit**: Click submit to run Renovate with your configuration
-5. **View Results**: Monitor real-time logs and view the analysis results
+## 🏗️ Architecture
 
+### How It Works
 
-## Project Structure
+```
+┌─────────────┐     ┌─────────────┐     ┌──────────────┐
+│   Browser   │────▶│  Angular UI │────▶│  NestJS API  │
+│             │◀────│             │◀────│+Renovate CLI │
+└─────────────┘     └─────────────┘     └──────────────┘
+```
+
+1. **User Input** — Enter repository URL, PAT, and Renovate configuration
+2. **Backend Processing** — NestJS spawns Renovate in dry-run mode
+3. **Real-time Streaming** — Logs streamed via Server-Sent Events (SSE)
+4. **Results Display** — View package files, updates, and branch info
+
+### Project Structure
 
 ```
 renovate-playground/
 ├── apps/
-│   ├── api/              # NestJS backend
-│   │   └── src/
-│   │       └── app/
-│   │           └── playground/  # Renovate execution service
-│   └── ui/               # Angular frontend
+│   ├── api/                  # NestJS backend
+│   │   └── src/app/
+│   │       └── playground/   # Renovate execution service
+│   └── ui/                   # Angular frontend
 │       └── src/
-├── Dockerfile            # Multi-stage production build
-├── nx.json               # Nx workspace configuration
-├── package.json          # Dependencies and scripts
-└── README.md
+├── Dockerfile                # Multi-stage production build
+├── nx.json                   # Nx workspace configuration
+└── package.json              # Dependencies and scripts
 ```
 
-## Technology Stack
+### Technology Stack
 
-### Frontend
-- Angular 20
-- Angular Material
-- RxJS for reactive programming
-- Server-Sent Events for real-time updates
+| Layer         | Technology                                   |
+| ------------- | -------------------------------------------- |
+| **Frontend**  | Angular 20, Amadeus Design Factory           |
+| **Backend**   | NestJS 11, Renovate, Node.js child processes |
+| **Build**     | Nx monorepo, pnpm                            |
+| **Container** | Docker / Podman                              |
 
-### Backend
-- NestJS 11
-- Renovate (embedded)
-- Node.js child processes for Renovate execution
+## 🤝 Contributing
 
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
-## License
+## 📄 License
 
-See LICENSE file for details.
+See [LICENSE](./LICENSE) for details.
+
+---
