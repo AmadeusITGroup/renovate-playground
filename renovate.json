@@ -1,3 +1,54 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json"
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergeDigest",
+    ":automergeBranch"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 8am on monday"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "Group Angular packages together",
+      "groupName": "Angular",
+      "matchPackagePatterns": ["^@angular/"]
+    },
+    {
+      "description": "Group NestJS packages together", 
+      "groupName": "NestJS",
+      "matchPackagePatterns": ["^@nestjs/"]
+    },
+    {
+      "description": "Group Nx packages together",
+      "groupName": "Nx",
+      "matchPackagePatterns": ["^@nx/", "^nx$"]
+    },
+    {
+      "description": "Group TypeScript ESLint packages together",
+      "groupName": "TypeScript ESLint",
+      "matchPackagePatterns": ["^@typescript-eslint/"]
+    },
+    {
+      "description": "Auto-merge patch and minor updates for development dependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true
+    },
+    {
+      "description": "Auto-merge patch updates for production dependencies",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "osvVulnerabilityAlerts": true,
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "stabilityDays": 3
 }
