@@ -3,14 +3,14 @@ name: Renovate
 on:
   # Run daily at 6 AM UTC
   schedule:
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
   # Allow manual triggering
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Renovate log level'
+        description: "Renovate log level"
         required: false
-        default: 'info'
+        default: "info"
         type: choice
         options:
           - info
@@ -24,36 +24,25 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   renovate:
     name: Renovate Dependencies
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22.x'
-          cache: 'pnpm'
-
+        
       - name: Run Renovate
         uses: renovatebot/github-action@v44.0.4
         with:
           configurationFile: renovate.json
-          token: ${{ secrets.RENOVATE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
         env:
           # Set log level from manual input or default to info
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'info' }}
           # Enable renovate to create PRs and issues
           RENOVATE_REPOSITORIES: ${{ github.repository }}
-          # Use GitHub App token if available, otherwise use PAT
-          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
