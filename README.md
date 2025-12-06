@@ -81,9 +81,36 @@ Access at `http://localhost:4200` (UI with hot reload) or `http://localhost:8080
 
 ### Example Configuration
 
+For the below Dockerfile the following configuration is used which can be checked in the playground and verify whether the dependencies are picked.
+
+```dockerfile
+# renovate: datasource=github-tags depName=node packageName=nodejs/node versioning=node
+ENV NODE_VERSION=20.10.0
+# renovate: datasource=github-releases depName=composer packageName=composer/composer
+ENV COMPOSER_VERSION=1.9.3
+# renovate: datasource=docker packageName=docker versioning=docker
+ENV DOCKER_VERSION=19.03.1
+# renovate: datasource=npm packageName=yarn
+ENV YARN_VERSION=1.19.1
+```
+
+
 ```json
 {
-  "extends": ["config:recommended"]
+  "extends": ["config:recommended"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update _VERSION variables in Dockerfiles",
+      "managerFilePatterns": [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+?)(?: depName=(?<depName>.+?))? packageName=(?<packageName>.+?)(?: versioning=(?<versioning>[a-z-]+?))?\\s(?:ENV|ARG) .+?_VERSION=(?<currentValue>.+?)\\s"
+      ]
+    }
+  ]
 }
 ```
 
