@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.0...v1.1.1) (2025-12-06)
+
+### Bug Fixes
+
+* renovate ci setup ([b1e80ac](https://github.com/AmadeusITGroup/renovate-playground/commit/b1e80acdab1d6ff229be9960d99eb0e4f7d4a403))
+
 ## [1.1.0](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.0.2...v1.1.0) (2025-12-03)
 
 ### Features
