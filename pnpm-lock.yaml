@@ -40,7 +40,7 @@ importers:
         version: 20.2.4(@angular/common@20.2.4(@angular/core@20.2.4(@angular/compiler@20.2.4)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.2.4(@angular/compiler@20.2.4)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.2.4(@angular/animations@20.2.4(@angular/core@20.2.4(@angular/compiler@20.2.4)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.2.4(@angular/core@20.2.4(@angular/compiler@20.2.4)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.2.4(@angular/compiler@20.2.4)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
       '@design-factory/design-factory':
         specifier: ^20.0.0-next.2
-        version: 20.0.1(8fd6c70c7f10d0c6df269ec85e2728b9)
+        version: 20.0.2(8fd6c70c7f10d0c6df269ec85e2728b9)
       '@nestjs/common':
         specifier: ~11.1.5
         version: 11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -1430,8 +1430,8 @@ packages:
   '@cypress/xvfb@1.2.4':
     resolution: {integrity: sha512-skbBzPggOVYCbnGgV+0dmBdW/s77ZkAOXIC1knS8NagwDjBrNC1LuXtQJeiN6l+m7lzmHtaoUw/ctJKdqkG57Q==}
 
-  '@design-factory/design-factory@20.0.1':
-    resolution: {integrity: sha512-CBJZQ+E2peDYZeD6G9dWrDx9Ph7r6oPd2wFaICeWki/WkwOj6XUHVMCCynE7YpfXcOXRn0gRHTnIboWjcX1b1A==}
+  '@design-factory/design-factory@20.0.2':
+    resolution: {integrity: sha512-0iA3AMhcOcgjHL0tjmCKxVNCjmBbMKezH6l+sHhQZkT6QUboYt9iprLVdfNpp8c4UdeLfruUSDJs+3SBryGcpA==}
     peerDependencies:
       '@agnos-ui/angular-bootstrap': ~0.9.0
       '@agnos-ui/core-bootstrap': ~0.9.0
@@ -3381,6 +3381,7 @@ packages:
   '@renovatebot/kbpgp@4.0.1':
     resolution: {integrity: sha512-Uj52QvCuIr9qwvbPR3fymQFMwn0MIKItZrEKywNoSF7K4UVfrtBW3DGVQ9KZ2D5tFR3LgrlPdhNSYEkEVAQ4OA==}
     engines: {node: ^20.9.0 || ^22.11.0, pnpm: ^9.0.0}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   '@renovatebot/osv-offline-db@1.7.5':
     resolution: {integrity: sha512-LrwPAPecRLL/lYb9mDyeM6ndRLXCvUPHpMJ7dhOZFRiIXMLIo6Lu+1fAEPDxtBwYh21aFgtWVOoltGoTKuwzXQ==}
@@ -7733,6 +7734,7 @@ packages:
   keygrip@1.1.0:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
     engines: {node: '>= 0.6'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -8822,6 +8824,7 @@ packages:
   openpgp@6.2.1:
     resolution: {integrity: sha512-5vkqxQWgyrfY0shygqJTaCoa4SbPdjrpmtfREyXBBDrXjoRT25edEMQbdKH5/WxDXlLVn9TxPsVrKP72Jjuz2A==}
     engines: {node: '>= 18.0.0'}
+    deprecated: This version has a bug affecting zlib compression if manually enabled as part of encryption or signing (see https://github.com/openpgpjs/openpgpjs/pull/1894). Please update to v6.2.2 or later.
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -10549,6 +10552,10 @@ packages:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
     engines: {node: '>=12.0.0'}
 
+  tinyglobby@0.2.15:
+    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
+    engines: {node: '>=12.0.0'}
+
   tinylogic@2.0.0:
     resolution: {integrity: sha512-dljTkiLLITtsjqBvTA1MRZQK/sGP4kI3UJKc3yA9fMzYbMF2RhcN04SeROVqJBIYYOoJMM8u0WDnhFwMSFQotw==}
 
@@ -11946,7 +11953,7 @@ snapshots:
       '@angular/compiler-cli': 20.2.4(@angular/compiler@20.2.4)(typescript@5.8.3)
       '@babel/core': 7.28.3
       '@types/babel__core': 7.20.5
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       yargs: 18.0.0
     transitivePeerDependencies:
       - supports-color
@@ -14195,7 +14202,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@design-factory/design-factory@20.0.1(8fd6c70c7f10d0c6df269ec85e2728b9)':
+  '@design-factory/design-factory@20.0.2(8fd6c70c7f10d0c6df269ec85e2728b9)':
     dependencies:
       '@agnos-ui/core-bootstrap': 0.9.1(@amadeus-it-group/tansu@2.0.0)(@floating-ui/dom@1.7.4)(embla-carousel@8.6.0)(esm-env@1.2.2)
       '@angular/common': 20.2.4(@angular/core@20.2.4(@angular/compiler@20.2.4)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
@@ -25404,6 +25411,11 @@ snapshots:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.2)
       picomatch: 4.0.2
+
+  tinyglobby@0.2.15:
+    dependencies:
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
 
   tinylogic@2.0.0: {}
 
