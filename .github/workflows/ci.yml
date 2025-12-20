@@ -2,6 +2,8 @@ name: ci
 on:
   pull_request:
     branches: [main, develop]
+  pull_request_target:
+    branches: [main, develop]
   push:
     branches: [main, develop]
 concurrency:
@@ -16,10 +18,17 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    
+    # Skip duplicate runs: run pull_request_target only for bot PRs, pull_request for others
+    if: |
+      github.event_name != 'pull_request_target' ||
+      github.actor == 'github-actions[bot]' ||
+      github.actor == 'renovate[bot]'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
