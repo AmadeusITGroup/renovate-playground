@@ -2,11 +2,18 @@ name: pr
 on:
   pull_request:
     branches: [main, develop]
+  pull_request_target:
+    branches: [main, develop]
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
   build:
+    # Skip duplicate runs: run pull_request_target only for bot PRs, pull_request for others
+    if: |
+      github.event_name != 'pull_request_target' ||
+      github.actor == 'github-actions[bot]' ||
+      github.actor == 'renovate[bot]'
     uses: './.github/workflows/build.yml'
     with:
       dockerPublish: false
