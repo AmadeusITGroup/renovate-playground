@@ -27,6 +27,7 @@ permissions:
   pull-requests: write
   issues: write
   actions: write
+  statuses: write
 
 jobs:
   renovate:
