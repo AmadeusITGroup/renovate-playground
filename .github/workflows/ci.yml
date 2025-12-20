@@ -6,13 +6,16 @@ on:
     branches: [main, develop]
   push:
     branches: [main, develop]
+  repository_dispatch:
+    types: [renovate-ci]
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.client_payload.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
   packages: write
+  statuses: write
 
 jobs:
   build-and-test:
@@ -20,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     # Skip duplicate runs: run pull_request_target only for bot PRs, pull_request for others
     if: |
+      github.event_name == 'repository_dispatch' ||
       github.event_name != 'pull_request_target' ||
       github.actor == 'github-actions[bot]' ||
       github.actor == 'renovate[bot]'
@@ -28,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.client_payload.head_sha || github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
