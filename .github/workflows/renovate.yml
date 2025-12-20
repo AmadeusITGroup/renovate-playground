@@ -26,8 +26,7 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
-  statuses: write
-  actions: read
+  actions: write
 
 jobs:
   renovate:
@@ -37,7 +36,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        
+
       - name: Run Renovate
         uses: renovatebot/github-action@v44.0.4
         with:
@@ -48,3 +47,42 @@ jobs:
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'info' }}
           # Enable renovate to create PRs and issues
           RENOVATE_REPOSITORIES: ${{ github.repository }}
+
+      # Re-trigger CI for Renovate PRs since github-actions[bot] PRs don't trigger pull_request events
+      - name: Trigger CI for Renovate PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+
+            const renovatePRs = pulls.filter(pr =>
+              pr.user.login === 'github-actions[bot]' &&
+              pr.head.ref.startsWith('renovate/')
+            );
+
+            console.log(`Found ${renovatePRs.length} Renovate PRs to trigger CI for`);
+
+            for (const pr of renovatePRs) {
+              console.log(`Adding empty commit to PR #${pr.number} to trigger CI`);
+
+              // Create a repository dispatch event to trigger workflows
+              try {
+                await github.rest.repos.createDispatchEvent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  event_type: 'renovate-ci',
+                  client_payload: {
+                    pr_number: pr.number,
+                    head_sha: pr.head.sha,
+                    head_ref: pr.head.ref
+                  }
+                });
+                console.log(`Dispatched CI trigger for PR #${pr.number}`);
+              } catch (error) {
+                console.log(`Failed to dispatch for PR #${pr.number}: ${error.message}`);
+              }
+            }
