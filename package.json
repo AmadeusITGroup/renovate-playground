@@ -30,7 +30,7 @@
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/typeorm": "^11.0.0",
-    "@types/sqlite3": "^3.1.11",
+    "@types/sqlite3": "^5.0.0",
     "bootstrap": "^5.3.3",
     "renovate": "^41.46.5",
     "rxjs": "~7.8.0",
