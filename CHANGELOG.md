@@ -1,3 +1,9 @@
+## [1.1.3](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.2...v1.1.3) (2025-12-20)
+
+### Documentation
+
+* update the README with configuration ([14fcf41](https://github.com/AmadeusITGroup/renovate-playground/commit/14fcf419d96214e272be7c59c9f5afefb1bcc92d))
+
 ## [1.1.2](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.1...v1.1.2) (2025-12-20)
 
 ### Bug Fixes
