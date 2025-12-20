@@ -1,3 +1,9 @@
+## [1.1.4](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.3...v1.1.4) (2025-12-20)
+
+### Bug Fixes
+
+* remove pull_request_target and repository_dispatch triggers from workflows ([c8cdc7d](https://github.com/AmadeusITGroup/renovate-playground/commit/c8cdc7dd73841fdd0791684128fd182a630a6c34))
+
 ## [1.1.3](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.2...v1.1.3) (2025-12-20)
 
 ### Documentation
