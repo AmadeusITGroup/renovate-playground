@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.1...v1.1.2) (2025-12-20)
+
+### Bug Fixes
+
+* add pull_request_target trigger for bot PRs with duplicate run prevention ([aaf31eb](https://github.com/AmadeusITGroup/renovate-playground/commit/aaf31eb658824634d201be231b65b6dfb0203637))
+
 ## [1.1.1](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.0...v1.1.1) (2025-12-06)
 
 ### Bug Fixes
