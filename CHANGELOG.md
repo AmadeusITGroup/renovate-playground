@@ -1,3 +1,9 @@
+## [1.1.5](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.4...v1.1.5) (2025-12-21)
+
+### Bug Fixes
+
+* **deps:** update dependency @types/sqlite3 to v5 ([044ddd4](https://github.com/AmadeusITGroup/renovate-playground/commit/044ddd478104c3a9f936d378567860fbfae7ffc4))
+
 ## [1.1.4](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.3...v1.1.4) (2025-12-20)
 
 ### Bug Fixes

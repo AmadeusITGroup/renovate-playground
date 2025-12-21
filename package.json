@@ -1,6 +1,6 @@
 {
   "name": "renovate-playground",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "scripts": {
     "start:ui": "nx serve ui",
     "start:api": "nx serve api",
