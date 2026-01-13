@@ -1,3 +1,9 @@
+## [1.1.6](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.5...v1.1.6) (2026-01-13)
+
+### Bug Fixes
+
+* **deps:** update jest monorepo to v30 (major) ([#32](https://github.com/AmadeusITGroup/renovate-playground/issues/32)) ([b5c50f2](https://github.com/AmadeusITGroup/renovate-playground/commit/b5c50f20c6442d4f6a47aa672519f90aaceecc43))
+
 ## [1.1.5](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.4...v1.1.5) (2025-12-21)
 
 ### Bug Fixes
