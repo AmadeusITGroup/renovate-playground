@@ -1,3 +1,9 @@
+## [1.1.7](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.6...v1.1.7) (2026-01-15)
+
+### Bug Fixes
+
+* **deps:** update dependency zone.js to ~0.16.0 ([#24](https://github.com/AmadeusITGroup/renovate-playground/issues/24)) ([9e1f345](https://github.com/AmadeusITGroup/renovate-playground/commit/9e1f345aa2455fb86889e06882cc3c513f10e966))
+
 ## [1.1.6](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.5...v1.1.6) (2026-01-13)
 
 ### Bug Fixes
