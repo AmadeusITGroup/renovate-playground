@@ -85,7 +85,7 @@ importers:
         version: 0.3.26(babel-plugin-macros@3.1.0)(better-sqlite3@12.4.1)(redis@5.9.0)(reflect-metadata@0.2.2)(sqlite3@5.1.7)(ts-node@10.9.1(@types/node@18.16.9)(typescript@5.8.3))
       zod:
         specifier: ^4.0.10
-        version: 4.2.1
+        version: 4.3.5
       zone.js:
         specifier: ~0.16.0
         version: 0.16.0
@@ -11618,8 +11618,8 @@ packages:
   zod@4.1.13:
     resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
 
-  zod@4.2.1:
-    resolution: {integrity: sha512-0wZ1IRqGGhMP76gLqz8EyfBXKk0J2qo2+H3fi4mcUP/KtTocoX08nmIAHl1Z2kJIZbZee8KOpBCSNPRgauucjw==}
+  zod@4.3.5:
+    resolution: {integrity: sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g==}
 
   zone.js@0.16.0:
     resolution: {integrity: sha512-LqLPpIQANebrlxY6jKcYKdgN5DTXyyHAKnnWWjE5pPfEQ4n7j5zn7mOEEpwNZVKGqx3kKKmvplEmoBrvpgROTA==}
@@ -26458,7 +26458,7 @@ snapshots:
 
   zod@4.1.13: {}
 
-  zod@4.2.1: {}
+  zod@4.3.5: {}
 
   zone.js@0.16.0: {}
 
