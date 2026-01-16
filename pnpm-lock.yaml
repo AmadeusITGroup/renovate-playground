@@ -40,7 +40,7 @@ importers:
         version: 20.3.15(@angular/common@20.3.15(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.16.0))(@angular/platform-browser@20.3.15(@angular/animations@20.3.15(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.16.0)))(@angular/common@20.3.15(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.16.0)))(rxjs@7.8.2)
       '@design-factory/design-factory':
         specifier: ^20.0.0-next.2
-        version: 20.0.1(20e45c657f1d1f4332b54f57b94c5c73)
+        version: 20.0.2(20e45c657f1d1f4332b54f57b94c5c73)
       '@nestjs/common':
         specifier: ~11.1.5
         version: 11.1.9(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -1536,8 +1536,8 @@ packages:
   '@cypress/xvfb@1.2.4':
     resolution: {integrity: sha512-skbBzPggOVYCbnGgV+0dmBdW/s77ZkAOXIC1knS8NagwDjBrNC1LuXtQJeiN6l+m7lzmHtaoUw/ctJKdqkG57Q==}
 
-  '@design-factory/design-factory@20.0.1':
-    resolution: {integrity: sha512-CBJZQ+E2peDYZeD6G9dWrDx9Ph7r6oPd2wFaICeWki/WkwOj6XUHVMCCynE7YpfXcOXRn0gRHTnIboWjcX1b1A==}
+  '@design-factory/design-factory@20.0.2':
+    resolution: {integrity: sha512-0iA3AMhcOcgjHL0tjmCKxVNCjmBbMKezH6l+sHhQZkT6QUboYt9iprLVdfNpp8c4UdeLfruUSDJs+3SBryGcpA==}
     peerDependencies:
       '@agnos-ui/angular-bootstrap': ~0.9.0
       '@agnos-ui/core-bootstrap': ~0.9.0
@@ -14475,7 +14475,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@design-factory/design-factory@20.0.1(20e45c657f1d1f4332b54f57b94c5c73)':
+  '@design-factory/design-factory@20.0.2(20e45c657f1d1f4332b54f57b94c5c73)':
     dependencies:
       '@agnos-ui/core-bootstrap': 0.9.1(@amadeus-it-group/tansu@2.0.0)(@floating-ui/dom@1.7.4)(embla-carousel@8.6.0)(esm-env@1.2.2)
       '@angular/common': 20.3.15(@angular/core@20.3.16(@angular/compiler@20.3.16)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
