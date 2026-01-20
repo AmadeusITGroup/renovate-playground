@@ -2,10 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
+    "module": "nodenext",
     "types": ["jest", "node"],
     "esModuleInterop": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "nodenext"
   },
   "files": ["src/test-setup.ts"],
   "include": [
