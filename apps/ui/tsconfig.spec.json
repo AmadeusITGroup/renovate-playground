@@ -2,11 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "nodenext",
+    "module": "es2022",
     "types": ["jest", "node"],
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "nodenext"
+    "moduleResolution": "bundler",
+    "isolatedModules": true
   },
   "files": ["src/test-setup.ts"],
   "include": [
