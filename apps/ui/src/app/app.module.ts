@@ -1,12 +1,12 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
@@ -22,21 +22,22 @@ import { PlaygroundComponent } from './playground/playground.component';
   imports: [
     NavbarComponent, // Import standalone component
     BrowserModule,
-    BrowserAnimationsModule,
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
     MatCardModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     PlaygroundComponent,
     RouterModule.forRoot([
       { path: '', component: HomeComponent },
       { path: 'playground', component: PlaygroundComponent },
     ]),
   ],
-  providers: [],
+  providers: [
+    provideAnimations(),
+    provideHttpClient(withInterceptorsFromDi()),
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
