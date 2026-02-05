@@ -2,9 +2,24 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": [
+      "dom",
+      "es2022"
+    ]
   },
-  "files": ["src/main.ts"],
-  "include": ["**/*.d.ts"],
-  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
+  "files": [
+    "src/main.ts"
+  ],
+  "include": [
+    "**/*.d.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }

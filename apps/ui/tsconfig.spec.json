@@ -2,12 +2,23 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
-    "types": ["jest", "node"],
+    "module": "preserve",
+    "types": [
+      "jest",
+      "node"
+    ],
     "esModuleInterop": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "bundler",
+    "lib": [
+      "dom",
+      "es2022"
+    ],
+    "isolatedModules": true
   },
-  "files": ["src/test-setup.ts"],
+  "files": [
+    "src/test-setup.ts"
+  ],
   "include": [
     "jest.config.ts",
     "src/**/*.test.ts",
