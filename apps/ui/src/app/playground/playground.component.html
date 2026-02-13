@@ -64,6 +64,7 @@
             <th>Dependency</th>
             <th>Current Version</th>
             <th>New Version</th>
+            <th>Registry URL</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -74,13 +75,20 @@
             <td>{{ dep.currentVersion }}</td>
             <td>{{ dep.newVersion }}</td>
             <td>
+              <a *ngIf="dep.registryUrl" [href]="dep.registryUrl" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                {{ dep.registryUrl }}
+                <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+              <span *ngIf="!dep.registryUrl" class="text-muted">N/A</span>
+            </td>
+            <td>
               <span *ngIf="dep.status === 'discovered'" class="badge bg-info">Discovered</span>
               <span *ngIf="dep.status === 'update-available'" class="badge bg-success">Update Available</span>
               <span *ngIf="!dep.status" class="badge bg-secondary">Unknown</span>
             </td>
           </tr>
           <tr *ngIf="dependencies.length === 0">
-            <td colspan="5" class="text-center">No dependencies updated yet.</td>
+            <td colspan="6" class="text-center">No dependencies updated yet.</td>
           </tr>
         </tbody>
       </table>

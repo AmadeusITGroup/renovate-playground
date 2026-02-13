@@ -195,22 +195,8 @@ export class PlaygroundService {
       // Check if this is a special message type and set type accordingly
       let messageType = type;
       
-      // Log all messages that contain "branch" to debug
-      if (parsedLine.msg && typeof parsedLine.msg === 'string' && parsedLine.msg.toLowerCase().includes('branch')) {
-        this.logger.log(`[Backend] Branch-related messages: "${parsedLine.msg}"`);
-        this.logger.log(`[Backend] Has branchesInformation field: ${!!parsedLine.branchesInformation}`);
-      }
-  
-      
       if (parsedLine.msg === 'packageFiles with updates' && parsedLine.config) {
-        this.logger.debug('✅ Backend: Found packageFiles with updates');
         messageType = 'packageFilesWithUpdates';
-      } else if (parsedLine.msg === 'packageFiles' && parsedLine.packageFiles) {
-        this.logger.debug('✅ Backend: Found packageFiles');
-        messageType = 'packageFiles';
-      } else if (parsedLine.msg === 'branches info extended' && parsedLine.branchesInformation) {
-        this.logger.log(`✅ Backend: Found branches info extended with ${parsedLine.branchesInformation?.length} branches`);
-        messageType = 'branchesInfoExtended';
       }
 
       // Format the message with timestamp
@@ -220,7 +206,8 @@ export class PlaygroundService {
           original: line,
           time: timestamp,
           msg: parsedLine.msg || '',
-          level: parsedLine.level || 'info'
+          level: parsedLine.level || 'info',
+          ...(parsedLine.config && { config: parsedLine.config })
         },
         type: messageType
       };
