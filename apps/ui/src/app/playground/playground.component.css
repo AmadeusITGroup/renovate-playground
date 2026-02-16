@@ -115,6 +115,102 @@
   background: #777;
 }
 
+.monaco-editor-wrapper {
+  border-radius: 8px;
+  border: 1px solid #404040;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.monaco-editor-wrapper.monaco-editor-invalid {
+  border-color: #dc3545;
+  border-width: 3px;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+.monaco-editor-container {
+  overflow: hidden;
+}
+
+.editor-resize-handle {
+  height: 14px;
+  cursor: row-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: background 0.15s;
+  margin-top: 4px;
+}
+
+.editor-resize-handle:hover,
+.editor-resize-handle:active {
+  background: rgba(100, 149, 237, 0.15);
+}
+
+.editor-resize-grip {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: #6c757d;
+  transition: background 0.15s, width 0.15s;
+}
+
+.editor-resize-handle:hover .editor-resize-grip,
+.editor-resize-handle:active .editor-resize-grip {
+  background: #0d6efd;
+  width: 60px;
+}
+
+/* ── Resizable split pane ─────────────────────────────────── */
+
+.split-pane {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 0;
+}
+
+.split-pane-left,
+.split-pane-right {
+  overflow: auto;
+  flex-shrink: 0;
+  flex-grow: 0;
+  min-width: 0;
+  padding: 0 12px;
+}
+
+.split-divider {
+  flex: 0 0 8px;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: background 0.15s;
+  z-index: 10;
+  position: relative;
+}
+
+.split-divider:hover,
+.split-divider:active {
+  background: rgba(100, 149, 237, 0.15);
+}
+
+.split-divider-handle {
+  width: 4px;
+  height: 40px;
+  border-radius: 2px;
+  background: #6c757d;
+  transition: background 0.15s, height 0.15s;
+}
+
+.split-divider:hover .split-divider-handle,
+.split-divider:active .split-divider-handle {
+  background: #0d6efd;
+  height: 60px;
+}
+
 .table-bordered th,
 .table-bordered td {
   border: 1px solid #dee2e6;

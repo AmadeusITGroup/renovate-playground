@@ -1,8 +1,10 @@
-import { Component, ViewChild, ElementRef, OnInit, AfterViewChecked, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, AfterViewChecked, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PlaygroundService, RenovateLogMessage, RenovateRunResult } from './playground.service';
 import { Subscription } from 'rxjs';
+
+declare const require: any;
 // Define the Dependency interface outside the component class
 interface Dependency {
   type: string;
@@ -30,8 +32,9 @@ interface LogEntry {
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.css'],
 })
-export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @ViewChild('logContainer') private readonly logContainer: ElementRef;
+  @ViewChild('monacoContainer', { static: false }) private readonly monacoContainer: ElementRef;
 
   renovateForm: FormGroup;
   isRunning = false;
@@ -40,6 +43,26 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
   private currentEventSource: { close: () => void } | null = null;
   private currentSubscription: Subscription | null = null;
   private shouldAutoScroll = true;
+  private monacoEditor: any;
+  private editorInitialized = false;
+
+  // Resizable split pane
+  splitPosition = 50; // percentage for left pane
+  private readonly MIN_SPLIT = 5; // minimum percentage for either pane
+  private readonly MAX_SPLIT = 95; // maximum percentage for either pane
+  private isDragging = false;
+  private boundMouseMove: ((e: MouseEvent) => void) | null = null;
+  private boundMouseUp: (() => void) | null = null;
+
+  // Resizable Monaco editor height
+  editorHeight = 350; // pixels
+  private readonly MIN_EDITOR_HEIGHT = 100;
+  private readonly MAX_EDITOR_HEIGHT = 800;
+  private isEditorResizing = false;
+  private editorResizeStartY = 0;
+  private editorResizeStartHeight = 0;
+  private boundEditorResizeMove: ((e: MouseEvent) => void) | null = null;
+  private boundEditorResizeUp: (() => void) | null = null;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -59,8 +82,77 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
     });
   }
 
+  ngAfterViewInit(): void {
+    this.initMonaco();
+  }
+
   ngAfterViewChecked(): void {
     this.scrollToBottom();
+  }
+
+  private initMonaco(): void {
+    if (this.editorInitialized) return;
+
+    const onGotAmdLoader = () => {
+      const vsPath = 'assets/monaco/vs';
+      (window as any).require.config({ paths: { vs: vsPath } });
+      (window as any).require(['vs/editor/editor.main'], () => {
+        this.ngZone.run(() => this.createEditor());
+      });
+    };
+
+    // Load AMD loader if not already loaded
+    if (!(window as any).require) {
+      const loaderScript = document.createElement('script');
+      loaderScript.type = 'text/javascript';
+      loaderScript.src = 'assets/monaco/vs/loader.js';
+      loaderScript.addEventListener('load', onGotAmdLoader);
+      document.body.appendChild(loaderScript);
+    } else {
+      onGotAmdLoader();
+    }
+  }
+
+  private createEditor(): void {
+    if (!this.monacoContainer?.nativeElement) return;
+
+    const monaco = (window as any).monaco;
+    const initialValue = this.renovateForm.get('renovateConfig')?.value || '{}';
+
+    this.monacoEditor = monaco.editor.create(this.monacoContainer.nativeElement, {
+      value: initialValue,
+      language: 'json',
+      theme: 'vs-dark',
+      automaticLayout: true,
+      minimap: { enabled: false },
+      scrollBeyondLastLine: false,
+      fontSize: 14,
+      lineNumbers: 'on',
+      roundedSelection: false,
+      scrollbar: {
+        verticalScrollbarSize: 8,
+        horizontalScrollbarSize: 8,
+      },
+      tabSize: 2,
+      formatOnPaste: true,
+      formatOnType: true,
+    });
+
+    // Sync editor content back to the form control
+    this.monacoEditor.onDidChangeModelContent(() => {
+      const value = this.monacoEditor.getValue();
+      this.renovateForm.get('renovateConfig')?.setValue(value, { emitEvent: false });
+      this.renovateForm.get('renovateConfig')?.updateValueAndValidity();
+    });
+
+    // Listen for form control changes to update editor
+    this.renovateForm.get('renovateConfig')?.valueChanges.subscribe((value: string) => {
+      if (this.monacoEditor && value !== this.monacoEditor.getValue()) {
+        this.monacoEditor.setValue(value);
+      }
+    });
+
+    this.editorInitialized = true;
   }
 
   runRenovate(): void {
@@ -361,6 +453,10 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   ngOnDestroy(): void {
     this.cleanupConnections();
+    if (this.monacoEditor) {
+      this.monacoEditor.dispose();
+      this.monacoEditor = null;
+    }
   }
 
   private cleanupConnections(): void {
@@ -447,6 +543,111 @@ export class PlaygroundComponent implements OnInit, AfterViewChecked, OnDestroy 
         return 'Update Available';
       default:
         return 'Unknown';
+    }
+  }
+
+  // ── Resizable split pane ──────────────────────────────────────
+
+  onDividerMouseDown(event: MouseEvent): void {
+    event.preventDefault();
+    this.isDragging = true;
+
+    this.boundMouseMove = (e: MouseEvent) => this.onMouseMove(e);
+    this.boundMouseUp = () => this.onMouseUp();
+
+    document.addEventListener('mousemove', this.boundMouseMove);
+    document.addEventListener('mouseup', this.boundMouseUp);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  }
+
+  private onMouseMove(event: MouseEvent): void {
+    if (!this.isDragging) return;
+
+    const container = document.querySelector('.split-pane') as HTMLElement;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    let pct = ((event.clientX - rect.left) / rect.width) * 100;
+
+    // Clamp to min/max
+    pct = Math.max(this.MIN_SPLIT, Math.min(this.MAX_SPLIT, pct));
+
+    this.ngZone.run(() => {
+      this.splitPosition = pct;
+      // Notify Monaco that its container size changed
+      if (this.monacoEditor) {
+        this.monacoEditor.layout();
+      }
+    });
+  }
+
+  private onMouseUp(): void {
+    this.isDragging = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+
+    if (this.boundMouseMove) {
+      document.removeEventListener('mousemove', this.boundMouseMove);
+      this.boundMouseMove = null;
+    }
+    if (this.boundMouseUp) {
+      document.removeEventListener('mouseup', this.boundMouseUp);
+      this.boundMouseUp = null;
+    }
+  }
+
+  resetSplitPosition(): void {
+    this.splitPosition = 50;
+    if (this.monacoEditor) {
+      this.monacoEditor.layout();
+    }
+  }
+
+  // ── Resizable Monaco editor height ────────────────────────
+
+  onEditorResizeMouseDown(event: MouseEvent): void {
+    event.preventDefault();
+    this.isEditorResizing = true;
+    this.editorResizeStartY = event.clientY;
+    this.editorResizeStartHeight = this.editorHeight;
+
+    this.boundEditorResizeMove = (e: MouseEvent) => this.onEditorResizeMove(e);
+    this.boundEditorResizeUp = () => this.onEditorResizeUp();
+
+    document.addEventListener('mousemove', this.boundEditorResizeMove);
+    document.addEventListener('mouseup', this.boundEditorResizeUp);
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  }
+
+  private onEditorResizeMove(event: MouseEvent): void {
+    if (!this.isEditorResizing) return;
+
+    const delta = event.clientY - this.editorResizeStartY;
+    let newHeight = this.editorResizeStartHeight + delta;
+    newHeight = Math.max(this.MIN_EDITOR_HEIGHT, Math.min(this.MAX_EDITOR_HEIGHT, newHeight));
+
+    this.ngZone.run(() => {
+      this.editorHeight = newHeight;
+      if (this.monacoEditor) {
+        this.monacoEditor.layout();
+      }
+    });
+  }
+
+  private onEditorResizeUp(): void {
+    this.isEditorResizing = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+
+    if (this.boundEditorResizeMove) {
+      document.removeEventListener('mousemove', this.boundEditorResizeMove);
+      this.boundEditorResizeMove = null;
+    }
+    if (this.boundEditorResizeUp) {
+      document.removeEventListener('mouseup', this.boundEditorResizeUp);
+      this.boundEditorResizeUp = null;
     }
   }
 }
