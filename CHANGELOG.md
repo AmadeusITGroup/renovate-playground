@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.7...v1.2.0) (2026-02-17)
+
+### Features
+
+* code editor + resizable UI ([#50](https://github.com/AmadeusITGroup/renovate-playground/issues/50)) ([868888d](https://github.com/AmadeusITGroup/renovate-playground/commit/868888da3c3d30590b2d7b3f7e9f99189f163914))
+
 ## [1.1.7](https://github.com/AmadeusITGroup/renovate-playground/compare/v1.1.6...v1.1.7) (2026-01-15)
 
 ### Bug Fixes
