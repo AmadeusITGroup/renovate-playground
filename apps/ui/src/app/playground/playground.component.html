@@ -1,7 +1,7 @@
 <div class="container-fluid p-4">
-  <div class="row">
+  <div class="split-pane">
     <!-- Left side: Configuration -->
-    <div class="col-md-6">
+    <div class="split-pane-left" [style.flex-basis.%]="splitPosition">
       <h2 class="text-xl font-semibold mb-2">Configuration</h2>
       <form [formGroup]="renovateForm" (ngSubmit)="runRenovate()">
         <div class="mb-3">
@@ -16,7 +16,16 @@
         </div>
         <div class="mb-3">
           <label for="renovateConfig" class="form-label">Renovate Configuration (JSON)</label>
-          <textarea id="renovateConfig" formControlName="renovateConfig" rows="15" class="form-control"></textarea>
+          <div class="monaco-editor-wrapper"
+               [class.monaco-editor-invalid]="renovateForm.get('renovateConfig')?.errors?.['jsonInvalid']">
+            <div #monacoContainer class="monaco-editor-container"
+                 [style.height.px]="editorHeight"></div>
+          </div>
+          <div class="editor-resize-handle"
+               (mousedown)="onEditorResizeMouseDown($event)">
+            <div class="editor-resize-grip"></div>
+          </div>
+          <input type="hidden" formControlName="renovateConfig">
         </div>
         <button type="submit" [disabled]="isRunning" class="btn btn-primary">
           {{ isRunning ? 'Running...' : 'Run Renovate' }}
@@ -24,8 +33,15 @@
       </form>
     </div>
 
+    <!-- Draggable divider -->
+    <div class="split-divider"
+         (mousedown)="onDividerMouseDown($event)"
+         (dblclick)="resetSplitPosition()">
+      <div class="split-divider-handle"></div>
+    </div>
+
     <!-- Right side: Logs -->
-    <div class="col-md-6">
+    <div class="split-pane-right" [style.flex-basis.%]="100 - splitPosition">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="text-xl font-semibold mb-0">Live Logs</h2>
         <div class="d-flex align-items-center">
