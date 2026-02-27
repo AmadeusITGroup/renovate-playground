@@ -33,7 +33,7 @@
     "@types/sqlite3": "^5.0.0",
     "bootstrap": "^5.3.3",
     "monaco-editor": "^0.55.1",
-    "renovate": "^41.46.5",
+    "renovate": "^42.0.0",
     "rxjs": "~7.8.0",
     "sqlite3": "^5.1.7",
     "tslib": "^2.3.0",
