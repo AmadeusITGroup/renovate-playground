@@ -87,7 +87,6 @@ export class PlaygroundService {
 
             try {
               const parsedData = JSON.parse(dataMatch[1]);
-              console.log('SSE parsed data:', parsedData);
 
               // Handle the new backend format: {data: {original, time, msg, level}, type}
               let logMessage: RenovateLogMessage;

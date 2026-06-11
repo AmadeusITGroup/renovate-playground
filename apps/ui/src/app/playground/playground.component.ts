@@ -14,6 +14,7 @@ interface Dependency {
   manager?: string;
   depType?: string;
   status?: 'discovered' | 'update-available';
+  registryUrl?: string;
 }
 
 // Define the LogEntry interface for displaying logs with time
@@ -182,9 +183,6 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
         next: (logMessage: RenovateLogMessage) => {
           // Run inside Angular zone to trigger change detection
           this.ngZone.run(() => {
-            console.log('Received log message:', logMessage);
-            console.log('Received log message:', logMessage);
-
             // Create a log entry from the message
             const logEntry: LogEntry = {
               message: logMessage.msg || '',
@@ -198,17 +196,6 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
             // Process packageFiles if present
             if (logMessage.type === 'packageFilesWithUpdates' && logMessage.config) {
               this.processPackageFilesWithUpdates(logMessage.config);
-            } else if (logMessage.type === 'packageFiles' && logMessage.packageFiles) {
-              this.processPackageFiles(logMessage.packageFiles);
-            } else if (logMessage.type === 'branchesInfoExtended' && logMessage.branchesInformation) {
-              // TODO: Replace with proper logging mechanism if needed
-              this.processBranchesInfoExtended(logMessage.branchesInformation);
-            } else if (logMessage.msg === 'branches info extended' && logMessage.branchesInformation) {
-              // Fallback: Check msg directly in case type wasn't set
-              this.processBranchesInfoExtended(logMessage.branchesInformation);
-            } else {
-              // Still try the regex-based approach as fallback
-              this.parseDependencyUpdate(logEntry.message);
             }
             // Force change detection and scroll to bottom
             this.cdr.detectChanges();
@@ -280,81 +267,40 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
     }
   }
 
-  private parseDependencyUpdate(log: string): void {
-    const regex = /Upgrading dependency (\S+) from (\S+) to (\S+)/;
-    const match = log.match(regex);
-
-    if (match) {
-      const dep: Dependency = {
-        type: 'npm', // This can be enhanced to detect other types
-        name: match[1],
-        currentVersion: match[2],
-        newVersion: match[3],
-      };
-      if (!this.dependencies.some((d) => d.name === dep.name && d.newVersion === dep.newVersion)) {
-        this.dependencies.push(dep);
-      }
-    }
-  }
-
-  private processPackageFiles(packageFiles: unknown): void {
-    if (!packageFiles || !Array.isArray(packageFiles)) {
-      return;
-    }
-
-    // Process each package file
-    for (const pkgFile of packageFiles) {
-      if (pkgFile.deps) {
-        // Process each dependency in the package file
-        for (const [depName, depInfo] of Object.entries(pkgFile.deps)) {
-          const dep = depInfo as Record<string, unknown>;
-          if (dep.updates && Array.isArray(dep.updates) && dep.updates.length > 0) {
-            // Get the latest update
-            const update = dep.updates[dep.updates.length - 1] as Record<string, unknown>;
-
-            const dependency: Dependency = {
-              type: pkgFile.manager || 'npm',
-              name: depName,
-              currentVersion: (dep.currentVersion as string) || 'unknown',
-              newVersion: (update.newVersion as string) || 'unknown',
-              manager: pkgFile.manager,
-              depType: (dep.depType as string) || undefined
-            };
-
-            // Check if this dependency is already in the array
-            if (!this.dependencies.some((d) => d.name === dependency.name && d.newVersion === dependency.newVersion)) {
-              this.dependencies.push(dependency);
-            }
-          }
-        }
-      }
-    }
-  }
-
   private processPackageFilesWithUpdates(config: unknown): void {
     const configObj = config as Record<string, unknown>;
-    if (!configObj || !configObj.regex || !Array.isArray(configObj.regex)) {
-      return;
-    }
-
-    // Process each regex configuration
-    for (const regexConfig of configObj.regex) {
-      if (regexConfig.deps && Array.isArray(regexConfig.deps)) {
-        // Process each dependency in the regex config
-        for (const dep of regexConfig.deps) {
-          if (dep.updates && Array.isArray(dep.updates) && dep.updates.length > 0) {
-            // Process each update for this dependency
-            for (const update of dep.updates) {
-              const dependency: Dependency = {
-                type: dep.datasource || 'unknown',
-                name: dep.packageName || dep.depName || 'unknown',
-                currentVersion: dep.currentVersion || dep.currentValue || 'unknown',
-                newVersion: update.newVersion || update.newValue || 'unknown',
-                manager: regexConfig.packageFile ? 'regex' : dep.datasource,
-                depType: dep.depType || update.updateType
-              };
-
-              this.addOrUpdateDependency(dependency);
+    
+    // Process all manager types dynamically (npm, regex, docker, maven, etc.)
+    for (const [managerKey, managerValue] of Object.entries(configObj)) {
+      if (!Array.isArray(managerValue)) continue;
+      
+      for (const packageFile of managerValue) {
+        if (packageFile.deps && Array.isArray(packageFile.deps)) {
+          for (const dep of packageFile.deps) {
+            // Check if there are updates for this dependency
+            if (dep.updates && Array.isArray(dep.updates) && dep.updates.length > 0) {
+              // Process each update
+              for (const update of dep.updates) {
+                const packageName = dep.packageName || dep.depName || 'unknown';
+                const registryUrl = this.constructFullPackageUrl(
+                  dep.registryUrl || dep.sourceUrl,
+                  packageName,
+                  dep.datasource || managerKey
+                );
+                
+                const dependency: Dependency = {
+                  type: dep.datasource || managerKey,
+                  name: packageName,
+                  currentVersion: dep.currentVersion || dep.currentValue || 'unknown',
+                  newVersion: update.newVersion || update.newValue || 'unknown',
+                  manager: packageFile.manager || managerKey,
+                  depType: dep.depType || update.updateType,
+                  status: 'discovered', // Default status for discovered updates
+                  registryUrl: registryUrl
+                };
+                
+                this.addOrUpdateDependency(dependency);
+              }
             }
           }
         }
@@ -362,40 +308,27 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
     }
   }
 
-  private processBranchesInfoExtended(branchesInformation: unknown[]): void {
-    if (!branchesInformation || !Array.isArray(branchesInformation)) {
-      return;
+  private constructFullPackageUrl(baseUrl: string | undefined, packageName: string, datasource: string): string | undefined {
+    if (!baseUrl || !packageName) {
+      return undefined;
     }
 
-    // Logging: Starting to process branchesInformation
-
-    // Process each branch
-    for (const branch of branchesInformation) {
-      const branchObj = branch as Record<string, unknown>;
-      // Check if upgrades exist
-      if (branchObj.upgrades && Array.isArray(branchObj.upgrades)) {
-        // Process each upgrade in the branch
-        for (const upgrade of branchObj.upgrades) {
-          const upgradeObj = upgrade as Record<string, unknown>;
-          const dependency: Dependency = {
-            type: (upgradeObj.datasource as string) || 'unknown',
-            name: (upgradeObj.depName as string) || (upgradeObj.packageName as string) || 'unknown',
-            currentVersion: (upgradeObj.currentVersion as string) || (upgradeObj.fixedVersion as string) || 'unknown',
-            newVersion: (upgradeObj.newVersion as string) || 'unknown',
-            manager: upgradeObj.datasource as string,
-            depType: upgradeObj.updateType as string,
-            // Set status based on prNo - null means repo is not onboarded yet
-            status: branchObj.prNo === null ? 'discovered' : 'update-available'
-          };
-
-          this.addOrUpdateDependency(dependency);
-          // dependencyCount++;
-        }
-      }
+    // Handle different datasource types
+    switch (datasource) {
+      case 'npm':
+        // For npm registries, append the package name
+        return `${baseUrl}/${packageName}`;
+      case 'github-tags':
+      case 'github-releases':
+        // GitHub URLs are typically already complete
+        return baseUrl.includes(packageName) ? baseUrl : `https://github.com/${packageName}`;
+      case 'node-version':
+        // Node.js distribution URL
+        return baseUrl;
+      default:
+        // For other types, try to append package name if it's not already there
+        return baseUrl.includes(packageName) ? baseUrl : `${baseUrl}/${packageName}`;
     }
-
-    // For production, consider using a proper logging service instead of console.log
-    // Example: this.logger.info(`[UI Component] Extracted ${dependencyCount} dependencies. Total in table: ${this.dependencies.length}`);
   }
 
   private addOrUpdateDependency(dependency: Dependency): void {
