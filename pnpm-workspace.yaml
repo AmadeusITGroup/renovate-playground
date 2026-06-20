@@ -1,0 +1,32 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@scarf/scarf': true
+  better-sqlite3: true
+  core-js-pure: true
+  cypress: true
+  dtrace-provider: true
+  esbuild: true
+  less: true
+  lmdb: true
+  msgpackr-extract: true
+  nx: true
+  protobufjs: true
+  re2: true
+  sqlite3: true
+  unrs-resolver: true
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - "@scarf/scarf"
+  - better-sqlite3
+  - core-js-pure
+  - cypress
+  - dtrace-provider
+  - esbuild
+  - less
+  - lmdb
+  - msgpackr-extract
+  - nx
+  - protobufjs
+  - re2
+  - sqlite3
+  - unrs-resolver

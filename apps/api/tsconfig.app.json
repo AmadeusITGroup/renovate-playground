@@ -3,12 +3,15 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["node"],
+    "moduleResolution": "node",
+    "types": [
+      "node"
+    ],
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2017",
+    "target": "es2022",
     "sourceMap": true,
     "incremental": true,
     "skipLibCheck": true,
@@ -23,9 +26,19 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@renovate-playground/api/*": ["apps/api/src/*"]
+      "@renovate-playground/api/*": [
+        "apps/api/src/*"
+      ]
     }
   },
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
-  "include": ["**/*.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "jest.config.ts"
+  ],
+  "include": [
+    "**/*.ts"
+  ]
 }
