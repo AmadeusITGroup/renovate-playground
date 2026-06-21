@@ -25,10 +25,15 @@
             "glob": "**/*",
             "input": "node_modules/monaco-editor/min/vs",
             "output": "/assets/monaco/vs"
+          },
+          {
+            "glob": "**/*",
+            "input": "node_modules/@design-factory/styles/assets",
+            "output": "/assets"
           }
         ],
         "styles": [
-          "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "node_modules/@design-factory/styles/bundle.css",
           "apps/ui/src/styles.scss"
         ],
         "scripts": []

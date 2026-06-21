@@ -7,70 +7,99 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
   styles: [
     `
-      .home-container {
-        max-width: 1200px;
+      .rp-home {
+        max-width: 1100px;
         margin: 0 auto;
-        padding: 3rem 2rem;
+        padding: var(--df-spacing-7) var(--df-spacing-6) var(--df-spacing-8);
+      }
+      .rp-hero {
         text-align: center;
+        padding: var(--df-spacing-6) 0 var(--df-spacing-7);
       }
-      h1 {
-        color: #1976d2;
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
+      .rp-hero-title {
+        font-size: var(--df-typo-sizing-6xlarge);
+        font-weight: var(--df-typo-weight-bold);
+        line-height: 1.15;
+        letter-spacing: var(--df-typo-letterSpacing-condensed);
+        color: var(--df-color-inert-neutral-main-foreground);
+        margin: 0 0 var(--df-spacing-5);
       }
-      .intro {
-        font-size: 1.2rem;
-        line-height: 1.6;
-        color: #555;
-        margin-bottom: 3rem;
+      .rp-gradient {
+        color: var(--df-color-primary-main-default-background);
       }
-      .features {
+      .rp-hero-subtitle {
+        font-size: var(--df-typo-sizing-large);
+        line-height: 1.65;
+        color: var(--df-theme-neutral-80);
+        max-width: 620px;
+        margin: 0 auto var(--df-spacing-7);
+      }
+      .rp-features {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--df-spacing-5);
+        margin-top: var(--df-spacing-4);
       }
-      .feature {
-        background: #f9f9f9;
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      .rp-feature-card {
+        background: var(--df-color-inert-neutral-main-background);
+        border: 1px solid var(--df-color-inert-neutral-main-border);
+        border-radius: var(--df-borderRadius-main-large);
+        padding: var(--df-spacing-6);
+        transition: all 0.2s ease;
         position: relative;
-      }
-      .feature:not(.feature-disabled):hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         cursor: pointer;
+
+        &:not(.rp-feature-card--disabled):hover {
+          border-color: var(--df-color-primary-main-default-border);
+          box-shadow: 0 4px 24px var(--df-color-shadow-1);
+          transform: translateY(-2px);
+        }
       }
-      .feature-disabled {
-        opacity: 0.6;
+      .rp-feature-card--disabled {
+        opacity: 0.55;
         cursor: not-allowed;
       }
-      .feature h3 {
-        color: #1976d2;
-        margin-top: 0;
-        margin-bottom: 1rem;
-        font-size: 1.5rem;
+      .rp-feature-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--df-borderRadius-main-small);
+        font-size: var(--df-icons-sizing-2xlarge);
+        margin-bottom: var(--df-spacing-4);
       }
-      .feature p {
+      .rp-feature-icon--primary {
+        background: var(--df-color-primary-subtle-background);
+        color: var(--df-color-primary-main-default-background);
+      }
+      .rp-feature-icon--accent {
+        background: var(--df-color-accent-subtle-background);
+        color: var(--df-color-accent-main-default-background);
+      }
+      .rp-feature-card h3 {
+        font-size: var(--df-typo-sizing-large);
+        font-weight: var(--df-typo-weight-bold);
+        color: var(--df-color-inert-neutral-main-foreground);
+        margin: 0 0 var(--df-spacing-2);
+      }
+      .rp-feature-card p {
+        font-size: var(--df-typo-sizing-small);
+        line-height: 1.55;
+        color: var(--df-theme-neutral-80);
         margin: 0;
-        font-size: 1rem;
-        color: #555;
-        line-height: 1.5;
       }
-      .coming-soon {
+      .rp-soon-badge {
         display: inline-block;
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        background: #ff9800;
-        color: white;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
+        margin-top: var(--df-spacing-3);
+        font-size: var(--df-typo-sizing-xsmall);
+        font-weight: var(--df-typo-weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--df-typo-letterSpacing-spaced);
+        color: var(--df-color-warning-main-default-foreground);
+        background: var(--df-color-warning-main-default-background);
+        padding: var(--df-spacing-1) var(--df-spacing-3);
+        border-radius: var(--df-borderRadius-main-rounded);
       }
     `,
   ],

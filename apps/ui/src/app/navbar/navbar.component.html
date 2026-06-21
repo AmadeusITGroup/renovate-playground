@@ -1,18 +1,18 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-primary mb-4">
-  <div class="container-fluid">
-    <a class="navbar-brand text-white" href="#">Renovate Playground</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link text-white" routerLink="/playground" routerLinkActive="active">Playground</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white disabled-link" title="Coming soon">Regex Debugger</a>
-        </li>
-      </ul>
+<nav class="rp-navbar">
+  <div class="rp-navbar-inner">
+    <a class="rp-brand" routerLink="/">
+      <i class="fa-solid fa-wand-magic-sparkles rp-brand-icon"></i>
+      <span class="rp-brand-text">Renovate Playground</span>
+    </a>
+    <div class="rp-nav-links">
+      <a class="rp-nav-link" routerLink="/playground" routerLinkActive="active">
+        <i class="fa-solid fa-flask"></i>
+        Playground
+      </a>
+      <a class="rp-nav-link disabled" title="Coming soon">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        Regex Debugger
+      </a>
     </div>
   </div>
 </nav>

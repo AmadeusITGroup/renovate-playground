@@ -1,16 +1,29 @@
-<div class="home-container">
-  <h1>Welcome to Renovate Playground</h1>
-  <p class="intro">Test and experiment with Renovate configurations through an interactive UI playground.</p>
+<div class="rp-home">
+  <div class="rp-hero">
+    <h1 class="rp-hero-title">
+      Visualize <span class="rp-gradient">dependency updates</span> before you merge
+    </h1>
+    <p class="rp-hero-subtitle">
+      Renovate Playground is an interactive tool for testing Renovate configurations against any repository.
+      See real-time logs, discover dependency updates, and fine-tune your config — all in your browser.
+    </p>
+  </div>
 
-  <div class="features">
-    <div class="feature" (click)="navigateToPlayground()">
-      <h3>🔧 Playground</h3>
-      <p>Run Renovate against any GitHub repository with custom configurations and see real-time results.</p>
+  <div class="rp-features">
+    <div class="rp-feature-card" (click)="navigateToPlayground()">
+      <div class="rp-feature-icon rp-feature-icon--primary">
+        <i class="fa-solid fa-flask"></i>
+      </div>
+      <h3>Playground</h3>
+      <p>Run Renovate against any GitHub repository with custom configurations and watch results stream in real-time.</p>
     </div>
-    <div class="feature feature-disabled">
-      <h3>🔍 Regex Debugger</h3>
-      <p>Test and debug Renovate regex manager configurations.</p>
-      <span class="coming-soon">Coming Soon</span>
+    <div class="rp-feature-card rp-feature-card--disabled">
+      <div class="rp-feature-icon rp-feature-icon--accent">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <h3>Regex Debugger</h3>
+      <p>Test and debug Renovate regex manager configurations with live feedback and syntax highlighting.</p>
+      <span class="rp-soon-badge">Coming Soon</span>
     </div>
   </div>
 </div>

@@ -40,9 +40,11 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
   isRunning = false;
   logs: LogEntry[] = [];
   dependencies: Dependency[] = [];
+  showToken = false;
+  logFilter: 'all' | 'info' | 'warn' | 'error' = 'all';
   private currentEventSource: { close: () => void } | null = null;
   private currentSubscription: Subscription | null = null;
-  private shouldAutoScroll = true;
+  shouldAutoScroll = true;
   private monacoEditor: any;
   private editorInitialized = false;
 
@@ -496,6 +498,40 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
       .replace(/^\[\d{2}:\d{2}:\d{2}\]\s*/, '') // [HH:MM:SS] format
       .replace(/^(INFO|WARN|ERROR|DEBUG):\s*/i, '') // Log level prefixes
       .trim();
+  }
+
+  // ── Log filtering ────────────────────────────────────────────
+
+  get filteredLogs(): LogEntry[] {
+    if (this.logFilter === 'all') {
+      return this.logs;
+    }
+    return this.logs.filter(log => {
+      const logClass = this.getLogClass(log);
+      if (this.logFilter === 'error') return logClass === 'log-error';
+      if (this.logFilter === 'warn') return logClass === 'log-warning';
+      if (this.logFilter === 'info') return logClass === 'log-info' || logClass === 'log-success';
+      return true;
+    });
+  }
+
+  setLogFilter(filter: 'all' | 'info' | 'warn' | 'error'): void {
+    this.logFilter = filter;
+  }
+
+  clearLogs(): void {
+    this.logs = [];
+  }
+
+  getLogLevelLabel(log: LogEntry): string {
+    const logClass = this.getLogClass(log);
+    switch (logClass) {
+      case 'log-error': return 'ERR';
+      case 'log-warning': return 'WARN';
+      case 'log-success': return 'OK';
+      case 'log-info': return 'INFO';
+      default: return 'LOG';
+    }
   }
 
   getLogIcon(log: LogEntry): string {

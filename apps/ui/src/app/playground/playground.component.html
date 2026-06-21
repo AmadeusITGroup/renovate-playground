@@ -1,102 +1,164 @@
-<div class="container-fluid p-4">
-  <div class="split-pane">
-    <!-- Left side: Configuration -->
-    <div class="split-pane-left" [style.flex-basis.%]="splitPosition">
-      <h2 class="text-xl font-semibold mb-2">Configuration</h2>
-      <form [formGroup]="renovateForm" (ngSubmit)="runRenovate()">
-        <div class="mb-3">
-          <label for="repositoryUrl" class="form-label">Repository URL</label>
+<div class="rp-playground">
+  <!-- ── Split Pane: Config + Logs ─────────────────────────── -->
+  <div class="rp-split-pane">
+    <!-- Left: Configuration Panel -->
+    <div class="rp-config-panel" [style.flex-basis.%]="splitPosition">
+      <div class="rp-panel-header">
+        <div class="rp-panel-title">
+          <i class="fa-solid fa-gear rp-panel-icon"></i>
+          Configuration
+        </div>
+      </div>
+
+      <form [formGroup]="renovateForm" (ngSubmit)="runRenovate()" class="rp-config-form">
+        <!-- Repository URL -->
+        <div class="rp-field">
+          <label for="repositoryUrl" class="form-label">
+            <i class="fa-solid fa-box"></i> Repository URL
+          </label>
           <input id="repositoryUrl" type="text" formControlName="repositoryUrl" class="form-control" placeholder="https://github.com/owner/repo">
           <div class="form-text">Enter the GitHub repository URL to test Renovate on</div>
         </div>
-        <div class="mb-3">
-          <label for="githubToken" class="form-label">GitHub Token</label>
-          <input id="githubToken" type="password" formControlName="githubToken" class="form-control" placeholder="ghp_...">
+
+        <!-- GitHub Token -->
+        <div class="rp-field">
+          <label for="githubToken" class="form-label">
+            <i class="fa-solid fa-key"></i> GitHub Token
+          </label>
+          <div class="rp-token-input">
+            <input [type]="showToken ? 'text' : 'password'" id="githubToken" formControlName="githubToken" class="form-control" placeholder="ghp_...">
+            <button type="button" class="rp-token-toggle" (click)="showToken = !showToken" [attr.aria-label]="showToken ? 'Hide token' : 'Show token'">
+              <i class="fa-solid" [class.fa-eye-slash]="showToken" [class.fa-eye]="!showToken"></i>
+            </button>
+          </div>
           <div class="form-text">Personal access token with repository access</div>
         </div>
-        <div class="mb-3">
-          <label for="renovateConfig" class="form-label">Renovate Configuration (JSON)</label>
-          <div class="monaco-editor-wrapper"
-               [class.monaco-editor-invalid]="renovateForm.get('renovateConfig')?.errors?.['jsonInvalid']">
-            <div #monacoContainer class="monaco-editor-container"
+
+        <!-- Renovate Config JSON -->
+        <div class="rp-field">
+          <label class="form-label">
+            <i class="fa-solid fa-file-code"></i> Renovate Configuration (JSON)
+          </label>
+          <div class="rp-monaco-wrapper"
+               [class.rp-monaco-invalid]="renovateForm.get('renovateConfig')?.errors?.['jsonInvalid']">
+            <div #monacoContainer class="rp-monaco-container"
                  [style.height.px]="editorHeight"></div>
           </div>
-          <div class="editor-resize-handle"
+          <div class="rp-editor-resize-handle"
                (mousedown)="onEditorResizeMouseDown($event)">
-            <div class="editor-resize-grip"></div>
+            <div class="rp-editor-resize-grip"></div>
+          </div>
+          <div *ngIf="renovateForm.get('renovateConfig')?.errors?.['jsonInvalid']" class="rp-field-error">
+            <i class="fa-solid fa-triangle-exclamation"></i> Invalid JSON syntax
           </div>
           <input type="hidden" formControlName="renovateConfig">
         </div>
-        <button type="submit" [disabled]="isRunning" class="btn btn-primary">
-          {{ isRunning ? 'Running...' : 'Run Renovate' }}
+
+        <!-- Run Button -->
+        <button type="submit" [disabled]="isRunning" class="btn btn-primary rp-run-btn">
+          <span *ngIf="!isRunning"><i class="fa-solid fa-play"></i> Run Renovate</span>
+          <span *ngIf="isRunning" class="rp-running">
+            <span class="rp-spinner"></span>
+            Running...
+          </span>
         </button>
       </form>
     </div>
 
-    <!-- Draggable divider -->
-    <div class="split-divider"
+    <!-- Draggable Divider -->
+    <div class="rp-split-divider"
          (mousedown)="onDividerMouseDown($event)"
-         (dblclick)="resetSplitPosition()">
-      <div class="split-divider-handle"></div>
+         (dblclick)="resetSplitPosition()"
+         title="Drag to resize · Double-click to reset">
+      <div class="rp-split-divider-handle"></div>
     </div>
 
-    <!-- Right side: Logs -->
-    <div class="split-pane-right" [style.flex-basis.%]="100 - splitPosition">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h2 class="text-xl font-semibold mb-0">Live Logs</h2>
-        <div class="d-flex align-items-center">
-          <div *ngIf="isRunning" class="spinner-border spinner-border-sm text-primary me-2" role="status">
-            <span class="visually-hidden">Loading...</span>
+    <!-- Right: Logs Panel -->
+    <div class="rp-logs-panel" [style.flex-basis.%]="100 - splitPosition">
+      <div class="rp-panel-header rp-logs-header">
+        <div class="rp-panel-title">
+          <i class="fa-solid fa-tower-broadcast rp-panel-icon"></i>
+          Live Logs
+          <span *ngIf="isRunning" class="rp-live-pulse"></span>
+        </div>
+        <div class="rp-logs-controls">
+          <span class="rp-log-count">{{ logs.length }} entries</span>
+          <!-- Filter buttons -->
+          <div class="rp-log-filters">
+            <button class="rp-filter-btn" [class.active]="logFilter === 'all'" (click)="setLogFilter('all')">All</button>
+            <button class="rp-filter-btn rp-filter-info" [class.active]="logFilter === 'info'" (click)="setLogFilter('info')">Info</button>
+            <button class="rp-filter-btn rp-filter-warn" [class.active]="logFilter === 'warn'" (click)="setLogFilter('warn')">Warn</button>
+            <button class="rp-filter-btn rp-filter-error" [class.active]="logFilter === 'error'" (click)="setLogFilter('error')">Error</button>
           </div>
-          <span class="badge bg-secondary">{{ logs.length }} entries</span>
+          <!-- Auto-scroll toggle -->
+          <button class="rp-autoscroll-btn" [class.active]="shouldAutoScroll" (click)="shouldAutoScroll = !shouldAutoScroll" title="Toggle auto-scroll">
+            <i class="fa-solid fa-arrow-down"></i> {{ shouldAutoScroll ? 'Auto' : 'Manual' }}
+          </button>
+          <!-- Clear logs -->
+          <button class="rp-clear-btn" (click)="clearLogs()" title="Clear logs" [disabled]="logs.length === 0">
+            <i class="fa-solid fa-trash"></i>
+          </button>
         </div>
       </div>
-      <div #logContainer class="log-container" (scroll)="checkScrollPosition()">
-        <div *ngFor="let log of logs; let i = index"
-             class="log-entry"
+
+      <div #logContainer class="rp-log-container" (scroll)="checkScrollPosition()">
+        <div *ngFor="let log of filteredLogs; let i = index"
+             class="rp-log-entry"
              [ngClass]="getLogClass(log)">
-          <div class="log-content">
-            <span class="log-icon">{{ getLogIcon(log) }}</span>
-            <span class="log-timestamp">{{ log.time }}</span>
-            <span class="log-message">{{ getLogMessage(log) }}</span>
-          </div>
+          <span class="rp-log-level-badge" [ngClass]="getLogClass(log)">{{ getLogLevelLabel(log) }}</span>
+          <span class="rp-log-time">{{ log.time }}</span>
+          <span class="rp-log-msg">{{ getLogMessage(log) }}</span>
         </div>
-        <div *ngIf="logs.length === 0" class="no-logs-message">
-          <i class="bi bi-terminal"></i>
-          <span>Waiting for logs...</span>
+        <div *ngIf="filteredLogs.length === 0 && logs.length > 0" class="rp-no-logs">
+          <span>No logs match the current filter</span>
+        </div>
+        <div *ngIf="logs.length === 0" class="rp-no-logs">
+          <div class="rp-no-logs-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
+          <div>Waiting for logs... Run Renovate to see output</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bottom section: Dependencies Table -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <h2 class="text-xl font-semibold mb-2">Discovered Dependencies</h2>
-      <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
+  <!-- ── Dependencies Table ─────────────────────────────────── -->
+  <div class="rp-deps-section">
+    <div class="rp-panel-header">
+      <div class="rp-panel-title">
+        <i class="fa-solid fa-list-check rp-panel-icon"></i>
+        Discovered Dependencies
+        <span *ngIf="dependencies.length > 0" class="rp-dep-count">{{ dependencies.length }}</span>
+      </div>
+    </div>
+    <div class="rp-deps-table-wrap">
+      <table class="rp-deps-table">
+        <thead>
           <tr>
             <th>Type</th>
             <th>Dependency</th>
-            <th>Current Version</th>
+            <th>Current</th>
+            <th>&nbsp;</th>
             <th>New Version</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let dep of dependencies">
-            <td>{{ dep.type }}</td>
-            <td>{{ dep.name }}</td>
-            <td>{{ dep.currentVersion }}</td>
-            <td>{{ dep.newVersion }}</td>
+            <td><span class="rp-dep-type">{{ dep.type }}</span></td>
+            <td class="rp-dep-name">{{ dep.name }}</td>
+            <td><span class="rp-version rp-version-old">{{ dep.currentVersion }}</span></td>
+            <td class="rp-arrow"><i class="fa-solid fa-arrow-right"></i></td>
+            <td><span class="rp-version rp-version-new">{{ dep.newVersion }}</span></td>
             <td>
-              <span *ngIf="dep.status === 'discovered'" class="badge bg-info">Discovered</span>
-              <span *ngIf="dep.status === 'update-available'" class="badge bg-success">Update Available</span>
-              <span *ngIf="!dep.status" class="badge bg-secondary">Unknown</span>
+              <span *ngIf="dep.status === 'discovered'" class="rp-status rp-status-discovered">Discovered</span>
+              <span *ngIf="dep.status === 'update-available'" class="rp-status rp-status-update">Update Available</span>
+              <span *ngIf="!dep.status" class="rp-status rp-status-unknown">Unknown</span>
             </td>
           </tr>
           <tr *ngIf="dependencies.length === 0">
-            <td colspan="5" class="text-center">No dependencies updated yet.</td>
+            <td colspan="6" class="rp-deps-empty">
+              <div class="rp-deps-empty-icon"><i class="fa-solid fa-box-open"></i></div>
+              <div>No dependencies discovered yet. Run Renovate to find updates.</div>
+            </td>
           </tr>
         </tbody>
       </table>

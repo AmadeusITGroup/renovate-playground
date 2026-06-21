@@ -1,93 +1,133 @@
-/* You can add global styles to this file, and also import other style files */
+/* ── Renovate Playground Global Styles ────────────────────── */
+/* Design Factory bundle.css provides Bootstrap + DF tokens + icon fonts */
 
-@import 'bootstrap/dist/css/bootstrap.min.css';
-/* ...existing styles... */
-/* Global styles */
+/* ── Font Awesome icon fix ──────────────────────────────────── */
+/* Ensure FA icons render normally, not italic (browser default for <i>) */
+.fa-solid, .fa-regular, .fa-light, .fa-brands, .fas, .far, .fal, .fab,
+i[class*="fa-"] {
+  font-style: normal;
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  color: #333;
-  background-color: #f5f5f5;
+  font-family: var(--df-typo-font-primaryFamily), 'Source Sans Pro', -apple-system, sans-serif;
+  color: var(--df-color-inert-neutral-main-foreground);
+  background-color: var(--df-color-inert-neutral-main-pageBackground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Responsive images */
-img {
-  max-width: 100%;
-  height: auto;
+* {
+  box-sizing: border-box;
 }
 
-/* Utility classes */
-.full-width {
-  width: 100%;
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--df-color-inert-neutral-subtle-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--df-theme-neutral-40);
+  border-radius: var(--df-borderRadius-main-small);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--df-theme-neutral-60);
 }
 
-.text-center {
-  text-align: center;
+/* ── Bootstrap / DF Overrides ────────────────────────────────── */
+.form-control {
+  background: var(--df-color-inert-neutral-main-background);
+  border: 1px solid var(--df-color-inert-neutral-main-border);
+  color: var(--df-color-inert-neutral-main-foreground);
+  border-radius: var(--df-borderRadius-main-small);
+  padding: var(--df-spacing-3) var(--df-spacing-4);
+  font-size: var(--df-typo-sizing-small);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    background: var(--df-color-inert-neutral-main-background);
+    border-color: var(--df-color-primary-main-default-border);
+    color: var(--df-color-inert-neutral-main-foreground);
+    box-shadow: 0 0 0 3px var(--df-color-primary-subtle-background);
+  }
+  &::placeholder {
+    color: var(--df-theme-neutral-50);
+  }
 }
 
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mt-4 { margin-top: 2rem; }
-
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 2rem; }
-
-/* Card styles */
-.mat-card {
-  margin: 1rem;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Form styles */
-.mat-form-field {
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-/* Button styles */
-button.mat-raised-button {
-  margin: 0.5rem;
+.form-label {
+  color: var(--df-color-inert-neutral-main-foreground);
+  font-weight: var(--df-typo-weight-medium);
+  font-size: var(--df-typo-sizing-xsmall);
   text-transform: uppercase;
-  font-weight: 500;
+  letter-spacing: var(--df-typo-letterSpacing-spaced);
+  margin-bottom: var(--df-spacing-2);
 }
 
-/* Responsive layout */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
+.form-text {
+  color: var(--df-theme-neutral-60);
+  font-size: var(--df-typo-sizing-xsmall);
+  margin-top: var(--df-spacing-1);
 }
 
-/* Flex utilities */
-.flex {
-  display: flex;
+.btn {
+  font-weight: var(--df-typo-weight-bold);
+  border-radius: var(--df-borderRadius-main-small);
+  padding: var(--df-spacing-3) var(--df-spacing-5);
+  font-size: var(--df-typo-sizing-small);
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
 }
 
-.flex-column {
-  flex-direction: column;
+.btn-primary {
+  background: var(--df-color-primary-main-default-background);
+  border: 1px solid var(--df-color-primary-main-default-border);
+  color: var(--df-color-primary-main-default-foreground);
+
+  &:hover:not(:disabled) {
+    background: var(--df-color-primary-main-hovered-background);
+    border-color: var(--df-color-primary-main-hovered-border);
+    color: var(--df-color-primary-main-hovered-foreground);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
-.justify-center {
-  justify-content: center;
+.btn-outline-secondary {
+  background: var(--df-color-inert-neutral-main-background);
+  border: 1px solid var(--df-color-inert-neutral-main-border);
+  color: var(--df-color-inert-neutral-main-foreground);
+
+  &:hover {
+    background: var(--df-color-inert-neutral-subtle-background);
+    border-color: var(--df-theme-neutral-40);
+  }
 }
 
-.justify-between {
-  justify-content: space-between;
+.badge {
+  font-weight: var(--df-typo-weight-bold);
+  font-size: var(--df-typo-sizing-xsmall);
+  padding: var(--df-spacing-1) var(--df-spacing-3);
+  border-radius: var(--df-borderRadius-main-small);
+  letter-spacing: 0.02em;
 }
 
-.align-center {
-  align-items: center;
+.table {
+  color: var(--df-color-inert-neutral-main-foreground);
+  margin-bottom: 0;
 }
 
-/* Spacing utilities */
-.p-1 { padding: 0.5rem; }
-.p-2 { padding: 1rem; }
-.p-3 { padding: 1.5rem; }
-.p-4 { padding: 2rem; }
+.table > :not(caption) > * > * {
+  padding: var(--df-spacing-3) var(--df-spacing-5);
+  border-color: var(--df-color-inert-neutral-main-border);
+}
+
+/* ── Utility ────────────────────────────────────────────────── */
+.text-muted { color: var(--df-theme-neutral-60) !important; }
