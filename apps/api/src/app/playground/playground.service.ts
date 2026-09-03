@@ -6,6 +6,23 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 
+// Renovate logs via pino, which uses numeric levels rather than strings
+const PINO_LEVELS: Record<number, string> = {
+  10: 'trace',
+  20: 'debug',
+  30: 'info',
+  40: 'warn',
+  50: 'error',
+  60: 'fatal',
+};
+
+function normalizeLogLevel(level: unknown): string {
+  if (typeof level === 'number') {
+    return PINO_LEVELS[level] ?? 'info';
+  }
+  return typeof level === 'string' ? level : 'info';
+}
+
 @Injectable()
 export class PlaygroundService {
   private readonly logger = new Logger(PlaygroundService.name);
@@ -13,6 +30,8 @@ export class PlaygroundService {
   private isProcessRunning = false;
   private stderrBuffer = '';
   private stdoutBuffer = '';
+  // Collected verbatim so the real failure reason survives even when Renovate exits with code 1
+  private capturedErrors: string[] = [];
 
   runRenovate(token: string, repository: string, config: object): Observable<MessageEvent> {
     // If a process is already running, queue this request
@@ -29,6 +48,7 @@ export class PlaygroundService {
 
     // Mark as running to prevent concurrent processes
     this.isProcessRunning = true;
+    this.capturedErrors = [];
     return new Observable<MessageEvent>(subscriber => {
       try {
         // Create a temporary directory for Renovate
@@ -88,17 +108,22 @@ export class PlaygroundService {
             this.stdoutBuffer = '';
           }
 
+          // Exit code 1 can mean either "no updates found" or a real failure (bad token, invalid
+          // config, repo not found) that also exits 1 - so trust captured error/fatal lines over the code alone
+          const hasRealError = exitCode > 1 || this.capturedErrors.length > 0;
+
           // Send final status message instead of error
           subscriber.next({
             data: `Renovate process completed with exit code ${exitCode}`,
-            type: exitCode === 0 ? 'success' : 'warning',
+            type: exitCode === 0 ? 'success' : hasRealError ? 'error' : 'warning',
           });
 
-          // For Renovate, exit code 1 is often normal (no updates found)
-          // Only treat codes > 1 as actual errors
-          if (exitCode > 1) {
+          if (hasRealError) {
+            const detail = this.capturedErrors.length > 0
+              ? this.capturedErrors.join('\n')
+              : `Process failed with exit code ${exitCode}. Check logs for details.`;
             subscriber.next({
-              data: `Process failed with exit code ${exitCode}. Check logs for details.`,
+              data: detail,
               type: 'error',
             });
           }
@@ -191,6 +216,7 @@ export class PlaygroundService {
 
       // Extract timestamp if available
       const timestamp = parsedLine.time || new Date().toISOString();
+      const normalizedLevel = normalizeLogLevel(parsedLine.level);
 
       // Check if this is a special message type and set type accordingly
       let messageType = type;
@@ -213,14 +239,25 @@ export class PlaygroundService {
         messageType = 'branchesInfoExtended';
       }
 
+      // Surface real error/fatal lines explicitly so they aren't lost in the debug stream
+      // or masked by a misleadingly "normal" exit code later
+      if (normalizedLevel === 'error' || normalizedLevel === 'fatal') {
+        messageType = 'error';
+        if (typeof parsedLine.msg === 'string' && parsedLine.msg) {
+          this.capturedErrors.push(parsedLine.msg);
+        }
+      }
+
+      const { logContext, ...uiLogLine } = parsedLine;
+
       // Format the message with timestamp
       // Send the ORIGINAL line (already a JSON string) plus metadata
       const messageWithTime: MessageEvent = {
         data: {
-          original: line,
+          original: JSON.stringify(uiLogLine),
           time: timestamp,
           msg: parsedLine.msg || '',
-          level: parsedLine.level || 'info'
+          level: normalizedLevel
         },
         type: messageType
       };

@@ -28,9 +28,19 @@
   background-color: rgba(23, 162, 184, 0.1);
 }
 
+.log-entry.log-info .log-message,
+.log-entry.log-info .log-level {
+  color: #5bc8dd;
+}
+
 .log-entry.log-success {
   border-left-color: #28a745;
   background-color: rgba(40, 167, 69, 0.1);
+}
+
+.log-entry.log-success .log-message,
+.log-entry.log-success .log-level {
+  color: #6fdc8c;
 }
 
 .log-entry.log-warning {
@@ -38,9 +48,50 @@
   background-color: rgba(255, 193, 7, 0.1);
 }
 
+.log-entry.log-warning .log-message,
+.log-entry.log-warning .log-level {
+  color: #ffd75e;
+}
+
 .log-entry.log-error {
   border-left-color: #dc3545;
   background-color: rgba(220, 53, 69, 0.1);
+}
+
+.log-entry.log-error .log-message,
+.log-entry.log-error .log-level {
+  color: #ff6b7a;
+}
+
+.log-entry.log-fatal {
+  border-left-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.25);
+}
+
+.log-entry.log-fatal .log-message,
+.log-entry.log-fatal .log-level {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.log-entry.log-debug {
+  border-left-color: #6f42c1;
+  background-color: rgba(111, 66, 193, 0.08);
+}
+
+.log-entry.log-debug .log-message,
+.log-entry.log-debug .log-level {
+  color: #b394e0;
+}
+
+.log-entry.log-trace {
+  border-left-color: #495057;
+  background-color: rgba(73, 80, 87, 0.05);
+}
+
+.log-entry.log-trace .log-message,
+.log-entry.log-trace .log-level {
+  color: #888;
 }
 
 .log-entry.log-default {
@@ -52,6 +103,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  cursor: default;
 }
 
 .log-timestamp {
@@ -61,12 +113,42 @@
   font-weight: 500;
 }
 
+.log-level {
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 42px;
+  letter-spacing: 0.5px;
+}
+
 .log-message {
   flex: 1;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.2;
   font-size: 0.75rem;
+}
+
+.log-expand-hint {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1;
+  min-width: 16px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.log-details {
+  margin: 6px 0 0 26px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  color: #c9c9c9;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .no-logs-message {
@@ -97,21 +179,25 @@
 }
 
 /* Scrollbar styling */
-.log-container::-webkit-scrollbar {
+.log-container::-webkit-scrollbar,
+.log-details::-webkit-scrollbar {
   width: 8px;
 }
 
-.log-container::-webkit-scrollbar-track {
+.log-container::-webkit-scrollbar-track,
+.log-details::-webkit-scrollbar-track {
   background: #2a2a2a;
   border-radius: 4px;
 }
 
-.log-container::-webkit-scrollbar-thumb {
+.log-container::-webkit-scrollbar-thumb,
+.log-details::-webkit-scrollbar-thumb {
   background: #555;
   border-radius: 4px;
 }
 
-.log-container::-webkit-scrollbar-thumb:hover {
+.log-container::-webkit-scrollbar-thumb:hover,
+.log-details::-webkit-scrollbar-thumb:hover {
   background: #777;
 }
 
