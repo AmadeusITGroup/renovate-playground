@@ -54,12 +54,16 @@
       <div #logContainer class="log-container" (scroll)="checkScrollPosition()">
         <div *ngFor="let log of logs; let i = index"
              class="log-entry"
-             [ngClass]="getLogClass(log)">
+             [ngClass]="getLogClass(log)"
+             (click)="getLogDetails(log) ? toggleLogDetails(log) : null">
           <div class="log-content">
             <span class="log-icon">{{ getLogIcon(log) }}</span>
             <span class="log-timestamp">{{ log.time }}</span>
+            <span class="log-level">{{ getLogLevelLabel(log) }}</span>
             <span class="log-message">{{ getLogMessage(log) }}</span>
+            <span class="log-expand-hint" *ngIf="getLogDetails(log)">{{ log.expanded ? '▾' : '▸' }}</span>
           </div>
+          <pre class="log-details" *ngIf="log.expanded && getLogDetails(log)">{{ getLogDetails(log) }}</pre>
         </div>
         <div *ngIf="logs.length === 0" class="no-logs-message">
           <i class="bi bi-terminal"></i>

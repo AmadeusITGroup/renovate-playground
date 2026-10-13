@@ -1,0 +1,19 @@
+allowBuilds:
+  # Native modules / binaries required by the build, tests and runtime
+  '@parcel/watcher': true
+  better-sqlite3: true
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true
+  nx: true
+  re2: true
+  sqlite3: true
+  unrs-resolver: true
+  # Telemetry, cosmetic or optional install scripts, not needed
+  '@nestjs/core': false
+  '@scarf/scarf': false
+  core-js-pure: false
+  cypress: false
+  dtrace-provider: false
+  less: false
+  protobufjs: false

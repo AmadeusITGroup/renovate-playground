@@ -23,6 +23,8 @@ interface LogEntry {
   level: string;
   type: string;
   raw?: unknown;
+  original?: string;
+  expanded?: boolean;
 }
 
 @Component({
@@ -191,7 +193,9 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
               time: this.formatTimestamp(logMessage.time) || this.getCurrentTimestamp(),
               level: logMessage.level || 'info',
               type: logMessage.type || 'log',
-              raw: logMessage
+              raw: logMessage,
+              original: logMessage.original,
+              expanded: false
             };
 
             this.logs.push(logEntry);
@@ -474,19 +478,57 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   getLogClass(log: LogEntry): string {
-    if (log.level === 'error' || log.message.toLowerCase().includes('error') || log.message.toLowerCase().includes('failed') || log.message.toLowerCase().includes('fatal')) {
+    switch (log.level) {
+      case 'fatal':
+        return 'log-fatal';
+      case 'error':
+        return 'log-error';
+      case 'warn':
+        return 'log-warning';
+      case 'debug':
+        return 'log-debug';
+      case 'trace':
+        return 'log-trace';
+      case 'success':
+        return 'log-success';
+      case 'info':
+        return 'log-info';
+      default:
+        break;
+    }
+    // Fallback text heuristics for entries without a recognized structured level (e.g. raw stdout)
+    if (log.type === 'error' || log.message.toLowerCase().includes('error') || log.message.toLowerCase().includes('failed') || log.message.toLowerCase().includes('fatal')) {
       return 'log-error';
     }
-    if (log.level === 'warn' || log.message.toLowerCase().includes('warn') || log.message.toLowerCase().includes('warning')) {
+    if (log.message.toLowerCase().includes('warn')) {
       return 'log-warning';
     }
-    if (log.level === 'success' || log.message.toLowerCase().includes('success') || log.message.toLowerCase().includes('completed') || log.message.toLowerCase().includes('done')) {
+    if (log.message.toLowerCase().includes('success') || log.message.toLowerCase().includes('completed') || log.message.toLowerCase().includes('done')) {
       return 'log-success';
     }
-    if (log.level === 'info' || log.message.toLowerCase().includes('info') || log.message.toLowerCase().includes('starting') || log.message.toLowerCase().includes('running')) {
-      return 'log-info';
-    }
     return 'log-default';
+  }
+
+  getLogLevelLabel(log: LogEntry): string {
+    return (log.level || 'info').toUpperCase();
+  }
+
+  toggleLogDetails(log: LogEntry): void {
+    log.expanded = !log.expanded;
+  }
+
+  getLogDetails(log: LogEntry): string {
+    if (!log.original) {
+      return '';
+    }
+    try {
+      const parsed = JSON.parse(log.original);
+      // msg/time/level/type are already shown on the summary line - only show the rest
+      const { msg, time, level, logContext, v, pid, hostname, ...rest } = parsed;
+      return Object.keys(rest).length ? JSON.stringify(rest, null, 2) : '';
+    } catch {
+      return '';
+    }
   }
 
   getLogMessage(log: LogEntry): string {
@@ -501,6 +543,8 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
   getLogIcon(log: LogEntry): string {
     const logClass = this.getLogClass(log);
     switch (logClass) {
+      case 'log-fatal':
+        return '💀';
       case 'log-error':
         return '❌';
       case 'log-warning':
@@ -509,6 +553,10 @@ export class PlaygroundComponent implements OnInit, AfterViewInit, AfterViewChec
         return '✅';
       case 'log-info':
         return 'ℹ️';
+      case 'log-debug':
+        return '🔍';
+      case 'log-trace':
+        return '·';
       default:
         return '📝';
     }

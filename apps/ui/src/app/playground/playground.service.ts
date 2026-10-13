@@ -10,6 +10,8 @@ export interface RenovateLogMessage {
   packageFiles?: unknown;
   config?: unknown;
   branchesInformation?: unknown[];
+  // Full raw pino line (JSON string), used to show every field, not just msg
+  original?: string;
 }
 
 // Define interface for the Renovate run result
@@ -111,7 +113,8 @@ export class PlaygroundService {
                   time: dataObj.time || parsedData.timestamp || new Date().toISOString(),
                   msg: dataObj.msg || innerData.msg || '',
                   level: dataObj.level || innerData.level || 'info',
-                  type: parsedData.type || 'log'
+                  type: parsedData.type || 'log',
+                  original: dataObj.original
                 };
 
                 // Check for special data types in innerData
