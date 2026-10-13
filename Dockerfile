@@ -13,7 +13,7 @@ USER root
 RUN npm install -g pnpm@latest
 
 # Copy package files for dependency installation
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY nx.json tsconfig.base.json jest.config.ts jest.preset.js ./
 
 # Copy project configuration files
@@ -46,7 +46,7 @@ RUN microdnf install -y git && microdnf clean all
 RUN npm install -g pnpm@latest
 
 # Copy package files and install only production dependencies
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --prod --frozen-lockfile && pnpm store prune
 
 # Copy built applications from builder stage
